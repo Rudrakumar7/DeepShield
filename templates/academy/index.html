@@ -1,0 +1,64 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container fade-in">
+    <div class="text-center mb-5">
+        <h1 class="display-3 font-weight-bold mb-3">🎓 Cyber Academy</h1>
+        <p class="lead text-secondary">Your roadmap to mastering cybersecurity and building a career.</p>
+    </div>
+
+    <div class="row">
+        <!-- Learning Paths Card -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 glass card-hover border-left-primary">
+                <div class="card-body text-center p-5">
+                    <div style="font-size: 4rem;" class="mb-4">📚</div>
+                    <h2 class="card-title font-weight-bold mb-3">Learning Paths</h2>
+                    <p class="card-text text-secondary mb-4">
+                        Comprehensive roadmaps for every specialization: Red Teaming, Blue Teaming, SOC, and more.
+                    </p>
+                    <a href="{{ url_for('academy_learning') }}" class="btn btn-primary btn-lg px-5 rounded-pill shadow">
+                        Start Learning
+                    </a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Career Hub Card -->
+        <div class="col-md-6 mb-4">
+            <div class="card h-100 glass card-hover border-left-success">
+                <div class="card-body text-center p-5">
+                    <div style="font-size: 4rem;" class="mb-4">💼</div>
+                    <h2 class="card-title font-weight-bold mb-3">Career Hub</h2>
+                    <p class="card-text text-secondary mb-4">
+                        Explore job roles, salary insights, interview prep, and eligibility criteria to land your dream
+                        job.
+                    </p>
+                    <a href="{{ url_for('academy_careers') }}" class="btn btn-success btn-lg px-5 rounded-pill shadow">
+                        Explore Careers
+                    </a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-hover {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .card-hover:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2) !important;
+    }
+
+    .border-left-primary {
+        border-left: 5px solid var(--primary);
+    }
+
+    .border-left-success {
+        border-left: 5px solid var(--success);
+    }
+</style>
+{% endblock %}

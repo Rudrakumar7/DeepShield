@@ -1,0 +1,63 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container fade-in">
+    <div class="text-center mb-5">
+        <h2 class="mb-3">📰 Cyber News Feed</h2>
+        <p class="text-secondary">Latest cybersecurity updates from around the web.</p>
+    </div>
+
+    <div class="news-grid">
+        {% for article in news %}
+        <div class="glass p-4 news-card">
+            <div class="d-flex justify-content-between align-items-center mb-2">
+                <span class="badge badge-primary">{{ article.source }}</span>
+                <small class="text-secondary">{{ article.published }}</small>
+            </div>
+            <h4 class="mb-3">{{ article.title }}</h4>
+            <p class="text-secondary mb-4">{{ article.summary }}</p>
+            <a href="{{ article.link }}" target="_blank" class="btn btn-outline-primary btn-sm">Read Full Article →</a>
+        </div>
+        {% else %}
+        <div class="col-12 text-center">
+            <p>No news available at the moment.</p>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div class="mt-5 text-center">
+        <a href="{{ url_for('dashboard') }}" class="text-secondary">← Back to Dashboard</a>
+    </div>
+</div>
+
+<style>
+    .news-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(350px, 1fr));
+        gap: 2rem;
+    }
+
+    .news-card {
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .news-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.2);
+        border-color: var(--primary-accent);
+    }
+
+    .badge-primary {
+        background: rgba(0, 243, 255, 0.1);
+        color: var(--primary-accent);
+        padding: 0.25rem 0.5rem;
+        border-radius: 4px;
+        font-size: 0.8rem;
+    }
+</style>
+{% endblock %}

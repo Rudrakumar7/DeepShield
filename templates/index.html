@@ -1,0 +1,90 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="hero-section text-center">
+    <h1 class="hero-title">Secure Your Digital Reality with <span class="text-gradient">DeepShield</span></h1>
+    <p class="hero-subtitle">The advanced AI-powered platform to detect deepfakes in image, audio, and video content.
+        Cybersecurity for the modern age.</p>
+    <div class="hero-actions mt-4">
+        {% if current_user.is_authenticated %}
+        <a href="{{ url_for('dashboard') }}" class="btn-primary">Go to Dashboard</a>
+        {% else %}
+        <a href="{{ url_for('register') }}" class="btn-primary">Start Scanning</a>
+        <a href="#features" class="btn-secondary">Learn More</a>
+        {% endif %}
+    </div>
+</div>
+
+<div id="features" class="features-grid mt-4">
+    <a href="{{ url_for('detect_image') }}" class="feature-card glass no-underline">
+        <h3>📸 Image Detection</h3>
+        <p>Analyze pixel patterns to detect GAN-generated faces and artifacts.</p>
+    </a>
+    <a href="{{ url_for('detect_audio') }}" class="feature-card glass no-underline">
+        <h3>🎙️ Audio Analysis</h3>
+        <p>Identify voice cloning and synthesized speech anomalies.</p>
+    </a>
+    <a href="{{ url_for('detect_video') }}" class="feature-card glass no-underline">
+        <h3>🎥 Video Scanning</h3>
+        <p>Frame-by-frame deepfake analysis for comprehensive protection.</p>
+    </a>
+    <a href="{{ url_for('tools') }}" class="feature-card glass no-underline">
+        <h3>🛡️ Security Tools</h3>
+        <p>Password Strength, Generator, & Phishing Checker.</p>
+    </a>
+    <a href="{{ url_for('cyber_news') }}" class="feature-card glass no-underline">
+        <h3>📰 Cyber News</h3>
+        <p>Stay updated with real-time cybersecurity news feeds.</p>
+    </a>
+    <a href="{{ url_for('awareness') }}" class="feature-card glass no-underline">
+        <h3>🧠 Cyber Awareness</h3>
+        <p>Learn about phishing, deepfakes, and staying safe online.</p>
+    </a>
+    <a href="{{ url_for('academy') }}" class="feature-card glass no-underline">
+        <h3>🎓 Cyber Academy</h3>
+        <p>Master cybersecurity with guided learning paths and career resources.</p>
+    </a>
+</div>
+
+<style>
+    .hero-section {
+        padding: 5rem 1rem;
+    }
+
+    .hero-title {
+        font-size: 3.5rem;
+        margin-bottom: 1rem;
+        line-height: 1.2;
+    }
+
+    .hero-subtitle {
+        font-size: 1.2rem;
+        color: var(--text-secondary);
+        max-width: 600px;
+        margin: 0 auto;
+    }
+
+    .features-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+        gap: 2rem;
+        padding: 2rem 0;
+    }
+
+    .feature-card {
+        padding: 2rem;
+        text-align: center;
+        transition: transform 0.3s;
+    }
+
+    .feature-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(0, 210, 255, 0.15);
+    }
+
+    .feature-card h3 {
+        margin-bottom: 1rem;
+        color: var(--primary-accent);
+    }
+</style>
+{% endblock %}

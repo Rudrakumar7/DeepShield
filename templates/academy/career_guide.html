@@ -1,0 +1,170 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container fade-in">
+    <div class="text-center mb-5">
+        <h1 class="font-weight-bold mb-3">💼 Career Hub</h1>
+        <p class="text-secondary">Explore roles, salary expectations, and how to get hired.</p>
+    </div>
+
+    <div class="row">
+        <!-- Sidebar -->
+        <div class="col-md-3 mb-4">
+            <div class="list-group glass sticky-top" style="top: 20px; z-index: 1;">
+                <a href="#role-soc" class="list-group-item list-group-item-action bg-transparent text-light active">SOC
+                    Analyst</a>
+                <a href="#role-pentester"
+                    class="list-group-item list-group-item-action bg-transparent text-light">Penetration Tester</a>
+                <a href="#role-engineer"
+                    class="list-group-item list-group-item-action bg-transparent text-light">Security Engineer</a>
+                <a href="#role-ciso" class="list-group-item list-group-item-action bg-transparent text-light">CISO</a>
+            </div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="col-md-9">
+
+            <!-- SOC Analyst -->
+            <div id="role-soc" class="glass p-4 mb-4 border-top-primary">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="text-primary mb-0">SOC Analyst (L1/L2)</h2>
+                    <span class="badge badge-primary p-2">Entry Level</span>
+                </div>
+                <p class="text-secondary">The first line of defense. Monitors alerts and investigates suspicious
+                    activity.</p>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h5 class="text-white">🎓 Eligibility</h5>
+                        <ul class="text-secondary small">
+                            <li>Bachelor's in CS/IT (Preferred)</li>
+                            <li>Basic Networking & Linux knowledge</li>
+                            <li>Certifications: CompTIA Security+, CySA+</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="text-white">🚀 How to Prepare</h5>
+                        <ul class="text-secondary small">
+                            <li>Build a Home Lab (ELK, Splunk Free)</li>
+                            <li>Practice analyzing PCAP files</li>
+                            <li>Learn Triage process</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Pentester -->
+            <div id="role-pentester" class="glass p-4 mb-4 border-top-danger">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="text-danger mb-0">Penetration Tester</h2>
+                    <span class="badge badge-danger p-2">Mid-Level</span>
+                </div>
+                <p class="text-secondary">Authorized hackers who test systems for weaknesses.</p>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h5 class="text-white">🎓 Eligibility</h5>
+                        <ul class="text-secondary small">
+                            <li>Strong coding skills (Python, Bash)</li>
+                            <li>Deep OS & Network understanding</li>
+                            <li>Certifications: OSCP, eJPT, CEH (Practical)</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="text-white">🚀 How to Prepare</h5>
+                        <ul class="text-secondary small">
+                            <li>Rank up on HackTheBox</li>
+                            <li>Write Writeups for CTFs</li>
+                            <li>Understand OWASP Top 10 deeply</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Security Engineer -->
+            <div id="role-engineer" class="glass p-4 mb-4 border-top-success">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="text-success mb-0">Security Engineer</h2>
+                    <span class="badge badge-success p-2">Mid-Senior Level</span>
+                </div>
+                <p class="text-secondary">Builds and maintains security infrastructure (Firewalls, SIEM, IAM).</p>
+
+                <div class="row mt-4">
+                    <div class="col-md-6">
+                        <h5 class="text-white">🎓 Eligibility</h5>
+                        <ul class="text-secondary small">
+                            <li>Experience with Cloud (AWS/Azure)</li>
+                            <li>DevSecOps knowledge</li>
+                            <li>Certifications: CISSP, AWS Security, CCSP</li>
+                        </ul>
+                    </div>
+                    <div class="col-md-6">
+                        <h5 class="text-white">🚀 How to Prepare</h5>
+                        <ul class="text-secondary small">
+                            <li>Learn IaC (Terraform, Ansible)</li>
+                            <li>Automate security checks</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+
+            <!-- CISO -->
+            <div id="role-ciso" class="glass p-4 mb-4 border-top-warning">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h2 class="text-warning mb-0">CISO</h2>
+                    <span class="badge badge-warning p-2">Executive Level</span>
+                </div>
+                <p class="text-secondary">Chief Information Security Officer. Responsible for entire organization's
+                    security strategy.</p>
+                <div class="mt-3">
+                    <small class="text-muted">Requires 10+ years of experience, Management skills, CISSP/CISM.</small>
+                </div>
+            </div>
+
+        </div>
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{{ url_for('academy') }}" class="btn btn-secondary">← Back to Academy</a>
+    </div>
+</div>
+
+<style>
+    .list-group-item {
+        border: none;
+    }
+
+    .list-group-item.active {
+        background-color: rgba(255, 255, 255, 0.1) !important;
+        border-right: 4px solid var(--primary);
+        font-weight: bold;
+    }
+
+    .border-top-primary {
+        border-top: 4px solid var(--primary);
+    }
+
+    .border-top-danger {
+        border-top: 4px solid var(--danger);
+    }
+
+    .border-top-success {
+        border-top: 4px solid var(--success);
+    }
+
+    .border-top-warning {
+        border-top: 4px solid var(--warning);
+    }
+</style>
+
+<script>
+    // Simple smooth scroll spy interaction
+    const links = document.querySelectorAll('.list-group-item');
+    links.forEach(link => {
+        link.addEventListener('click', function () {
+            links.forEach(l => l.classList.remove('active'));
+            this.classList.add('active');
+        });
+    });
+</script>
+{% endblock %}

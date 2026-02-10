@@ -1,0 +1,69 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">Cybersecurity Tools</h2>
+
+    <div class="tools-grid">
+        <!-- Password Generator Link -->
+        <a href="{{ url_for('password_generator') }}" class="tool-card-link">
+            <div class="glass p-4 tool-card">
+                <h3>🔐 Password Generator</h3>
+                <p class="text-secondary mt-2">Generate strong, secure passwords instantly.</p>
+            </div>
+        </a>
+
+        <!-- Phishing Checker Link -->
+        <a href="{{ url_for('phishing_checker') }}" class="tool-card-link">
+            <div class="glass p-4 tool-card">
+                <h3>🎣 Phishing URL Checker</h3>
+                <p class="text-secondary mt-2">Analyze URLs for potential phishing threats.</p>
+            </div>
+        </a>
+
+        <!-- Password Strength Checker Link -->
+        <a href="{{ url_for('password_strength') }}" class="tool-card-link">
+            <div class="glass p-4 tool-card">
+                <h3>💪 Password Strength</h3>
+                <p class="text-secondary mt-2">Test how strong your password is.</p>
+            </div>
+        </a>
+
+        <!-- Phishing Simulation Link -->
+        <a href="{{ url_for('phishing_simulation') }}" class="tool-card-link">
+            <div class="glass p-4 tool-card">
+                <h3>🎣 Phishing Simulation</h3>
+                <p class="text-secondary mt-2">Interactive "Spot the Phish" trainer.</p>
+            </div>
+        </a>
+    </div>
+</div>
+
+<style>
+    .tools-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .tool-card-link {
+        text-decoration: none;
+        color: inherit;
+        transition: transform 0.2s;
+    }
+
+    .tool-card-link:hover {
+        transform: translateY(-5px);
+    }
+
+    .tool-card {
+        height: 100%;
+        border: 1px solid rgba(255, 255, 255, 0.1);
+    }
+
+    .tool-card:hover {
+        border-color: var(--primary-accent);
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+    }
+</style>
+{% endblock %}

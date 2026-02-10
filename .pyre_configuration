@@ -1,0 +1,12 @@
+{
+    "source_directories": [
+        "c:\\Users\\rudra\\.gemini\\antigravity\\scratch\\DeepShield"
+    ],
+    "search_path": [
+        "c:\\Users\\rudra\\.gemini\\antigravity\\scratch\\DeepShield\\venv\\Lib\\site-packages",
+        "c:\\Users\\rudra\\.gemini\\antigravity\\scratch\\DeepShield"
+    ],
+    "exclude": [
+        "c:\\Users\\rudra\\.gemini\\antigravity\\scratch\\DeepShield\\venv"
+    ]
+}

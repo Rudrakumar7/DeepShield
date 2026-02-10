@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepShield | AI Deepfake Detection</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/style.css') }}">
+    <!-- Icons (Optional: could add FontAwesome or similar later, keeping lightweight for now) -->
+</head>
+
+<body>
+    <div class="background-mesh"></div>
+
+    <nav class="navbar glass">
+        <div class="logo">DeepShield <span class="accent-dot">.</span></div>
+        <div class="nav-links">
+            <a href="{{ url_for('index') }}" class="nav-link">Home</a>
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('dashboard') }}" class="nav-link">Dashboard</a>
+            <a href="{{ url_for('logout') }}" class="btn-secondary">Logout</a>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="nav-link">Login</a>
+            <a href="{{ url_for('register') }}" class="btn-primary">Get Started</a>
+            {% endif %}
+        </div>
+    </nav>
+
+    <div class="container">
+        {% with messages = get_flashed_messages(with_categories=true) %}
+        {% if messages %}
+        <div class="flash-messages">
+            {% for category, message in messages %}
+            <div class="alert alert-{{ category }} glass">
+                {{ message }}
+            </div>
+            {% endfor %}
+        </div>
+        {% endif %}
+        {% endwith %}
+
+        {% block content %}{% endblock %}
+    </div>
+
+    <footer class="glass footer">
+        <p>&copy; 2024 DeepShield. AI-Powered Security.</p>
+    </footer>
+
+    <!-- Chatbot Widget -->
+    <div id="chat-widget" class="chat-widget glass">
+        <div class="chat-header" onclick="toggleChat()">
+            <span>DeepShield Assistant</span>
+            <span id="chat-toggle-icon">▲</span>
+        </div>
+        <div id="chat-body" class="chat-body">
+            <div class="chat-message bot-message">
+                Hello! I'm DeepShield Assistant. How can I help you regarding security, tools, or detection?
+            </div>
+        </div>
+        <div class="chat-input-area">
+            <input type="text" id="chat-input" placeholder="Ask something..." onkeypress="handleChatInput(event)">
+            <button onclick="sendMessage()">➤</button>
+        </div>
+    </div>
+    <button id="chat-launcher" class="chat-launcher" onclick="toggleChat()">💬</button>
+
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+
+</html>

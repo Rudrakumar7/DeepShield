@@ -1,0 +1,41 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="auth-container">
+    <div class="auth-card glass">
+        <h2 class="text-center">Welcome Back</h2>
+        <p class="text-center form-label">Login to access your dashboard</p>
+
+        <form method="POST" action="{{ url_for('login') }}" class="mt-4">
+            <div class="form-group">
+                <label class="form-label">Username</label>
+                <input type="text" name="username" class="form-control" required>
+            </div>
+            <div class="form-group">
+                <label class="form-label">Password</label>
+                <input type="password" name="password" class="form-control" required>
+            </div>
+            <button type="submit" class="btn-primary" style="width: 100%">Login</button>
+        </form>
+
+        <p class="text-center mt-2">
+            <a href="{{ url_for('register') }}" class="nav-link" style="font-size: 0.9rem">Create an Account</a>
+        </p>
+    </div>
+</div>
+
+<style>
+    .auth-container {
+        display: flex;
+        justify-content: center;
+        align-items: center;
+        min-height: 60vh;
+    }
+
+    .auth-card {
+        width: 100%;
+        max-width: 400px;
+        padding: 2.5rem;
+    }
+</style>
+{% endblock %}

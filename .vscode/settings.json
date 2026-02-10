@@ -1,0 +1,13 @@
+{
+    "python.defaultInterpreterPath": "c:\\Users\\rudra\\.gemini\\antigravity\\scratch\\DeepShield\\venv\\Scripts\\python.exe",
+    "python.analysis.extraPaths": [
+        "c:\\Users\\rudra\\.gemini\\antigravity\\scratch\\DeepShield",
+        "c:\\Users\\rudra\\.gemini\\antigravity\\scratch\\DeepShield\\venv\\Lib\\site-packages"
+    ],
+    "python.autoComplete.extraPaths": [
+        "c:\\Users\\rudra\\.gemini\\antigravity\\scratch\\DeepShield",
+        "c:\\Users\\rudra\\.gemini\\antigravity\\scratch\\DeepShield\\venv\\Lib\\site-packages"
+    ],
+    "python.analysis.typeCheckingMode": "basic",
+    "python.envFile": "${workspaceFolder}/.env"
+}

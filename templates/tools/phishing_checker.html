@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="container">
+    <h2 class="mb-4">🎣 Phishing URL Checker</h2>
+    <div class="glass p-4" style="max-width: 600px; margin: 0 auto;">
+        <p class="text-secondary mb-4">Check if a URL is suspicious.</p>
+        <div class="form-group">
+            <input type="url" class="form-control" id="urlInput" placeholder="https://example.com">
+        </div>
+        <button class="btn-primary" onclick="checkPhishing()">Check URL</button>
+        <div id="phishingResult" class="mt-4 hidden p-2 rounded"></div>
+
+        <div class="mt-4 text-center">
+            <a href="{{ url_for('tools') }}" class="text-secondary">← Back to Tools</a>
+        </div>
+    </div>
+</div>
+
+<script>
+    async function checkPhishing() {
+        const urlInput = document.getElementById('urlInput');
+        const resultDiv = document.getElementById('phishingResult');
+        const url = urlInput.value;
+
+        resultDiv.classList.remove('hidden');
+
+        if (!url) {
+            resultDiv.innerHTML = "Please enter a URL.";
+            resultDiv.className = "mt-4 p-2 rounded alert-error";
+            return;
+        }
+
+        // Show loading state
+        resultDiv.innerHTML = "Checking URL...";
+        resultDiv.className = "mt-4 p-2 rounded text-secondary";
+
+        try {
+            const response = await fetch('/tools/phishing-checker', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ url: url }),
+            });
+
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+
+            const data = await response.json();
+
+            let resultClass = 'alert-info';
+            if (data.risk_level === 'High') resultClass = 'alert-error';
+            if (data.risk_level === 'Medium') resultClass = 'alert-warning';
+            if (data.risk_level === 'Low') resultClass = 'alert-success';
+
+            let detailsHtml = '';
+            if (data.details && data.details.length > 0) {
+                detailsHtml = '<ul class="mt-2 text-sm text-left list-disc list-inside">';
+                data.details.forEach(detail => {
+                    detailsHtml += `<li>${detail}</li>`;
+                });
+                detailsHtml += '</ul>';
+            }
+
+            resultDiv.innerHTML = `
+                <div class="font-bold">${data.result}</div>
+                <div>Risk Score: ${data.risk_score}</div>
+                ${detailsHtml}
+            `;
+            resultDiv.className = `mt-4 p-2 rounded ${resultClass}`;
+
+        } catch (error) {
+            console.error('Error:', error);
+            resultDiv.innerHTML = "An error occurred while checking the URL.";
+            resultDiv.className = "mt-4 p-2 rounded alert-error";
+        }
+    }
+</script>
+{% endblock %}

@@ -1,0 +1,231 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container fade-in">
+    <div class="text-center mb-5">
+        <h1 class="font-weight-bold mb-3">📚 Learning Paths</h1>
+        <p class="text-secondary">Choose a specialization to see the complete roadmap.</p>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-pills mb-4 justify-content-center" id="pills-tab" role="tablist">
+        <li class="nav-item">
+            <a class="nav-link active px-4" id="pills-red-tab" data-toggle="pill" href="#pills-red" role="tab"
+                aria-controls="pills-red" aria-selected="true">🔴 Red Teaming</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link px-4" id="pills-blue-tab" data-toggle="pill" href="#pills-blue" role="tab"
+                aria-controls="pills-blue" aria-selected="false">🔵 Blue Teaming</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link px-4" id="pills-purple-tab" data-toggle="pill" href="#pills-purple" role="tab"
+                aria-controls="pills-purple" aria-selected="false">🟣 Purple Teaming</a>
+        </li>
+        <li class="nav-item">
+            <a class="nav-link px-4" id="pills-soc-tab" data-toggle="pill" href="#pills-soc" role="tab"
+                aria-controls="pills-soc" aria-selected="false">🛡️ SOC Analyst</a>
+        </li>
+    </ul>
+
+    <!-- Content -->
+    <div class="tab-content" id="pills-tabContent">
+
+        <!-- Red Teaming -->
+        <div class="tab-pane fade show active" id="pills-red" role="tabpanel">
+            <div class="glass p-5 border-left-danger">
+                <h2 class="text-danger mb-4">Red Teaming (Offensive Security)</h2>
+                <p class="lead mb-4">Simulate attacks to find vulnerabilities before bad guys do.</p>
+
+                <h4 class="mb-4">Roadmap Steps:</h4>
+                <div class="timeline ml-3">
+                    <div class="timeline-item red">
+                        <div class="timeline-content">
+                            <h5 class="text-white mb-1">1. Networking Basics</h5>
+                            <p class="mb-0 text-secondary small">TCP/IP, OSI Model, DNS, HTTP/HTTPS, Subnetting.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item red">
+                        <div class="timeline-content">
+                            <h5 class="text-white mb-1">2. Linux & Scripting</h5>
+                            <p class="mb-0 text-secondary small">Command line proficiency, Bash scripting, Python for
+                                automation.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item red">
+                        <div class="timeline-content">
+                            <h5 class="text-white mb-1">3. Vulnerability Assessment</h5>
+                            <p class="mb-0 text-secondary small">Scanning with Nmap, identifying weak configs with
+                                Nessus.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item red">
+                        <div class="timeline-content">
+                            <h5 class="text-white mb-1">4. Exploitation</h5>
+                            <p class="mb-0 text-secondary small">Metasploit Framework, Burp Suite, SQL Injection, XSS.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="timeline-item red">
+                        <div class="timeline-content">
+                            <h5 class="text-white mb-1">5. Privilege Escalation</h5>
+                            <p class="mb-0 text-secondary small">Linux SUID/Sudo abuse, Windows Token manipulation.</p>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="mt-4 mb-3">Recommended Resources:</h4>
+                <div class="d-flex gap-3">
+                    <a href="#" class="btn btn-outline-danger btn-sm">HackTheBox</a>
+                    <a href="#" class="btn btn-outline-danger btn-sm">TryHackMe</a>
+                    <a href="#" class="btn btn-outline-danger btn-sm">PortSwigger Academy</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Blue Teaming -->
+        <div class="tab-pane fade" id="pills-blue" role="tabpanel">
+            <div class="glass p-5 border-left-info">
+                <h2 class="text-info mb-4">Blue Teaming (Defensive Security)</h2>
+                <p class="lead mb-4">Defend organizations by monitoring, detecting, and responding to threats.</p>
+
+                <h4 class="mb-4">Roadmap Steps:</h4>
+                <div class="timeline ml-3">
+                    <div class="timeline-item blue">
+                        <div class="timeline-content">
+                            <h5 class="text-white mb-1">1. Network Defense</h5>
+                            <p class="mb-0 text-secondary small">Firewalls, IDS/IPS, VPN configuration, Access Control
+                                Lists.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item blue">
+                        <div class="timeline-content">
+                            <h5 class="text-white mb-1">2. SIEM & Log Analysis</h5>
+                            <p class="mb-0 text-secondary small">Splunk, ELK Stack, Reading Syslogs and Windows Events.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="timeline-item blue">
+                        <div class="timeline-content">
+                            <h5 class="text-white mb-1">3. Incident Response</h5>
+                            <p class="mb-0 text-secondary small">NIST Framework, Containment, Eradication, Recovery.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item blue">
+                        <div class="timeline-content">
+                            <h5 class="text-white mb-1">4. Digital Forensics</h5>
+                            <p class="mb-0 text-secondary small">Analyzing disk images (Autopsy), Volatility for memory.
+                            </p>
+                        </div>
+                    </div>
+                    <div class="timeline-item blue">
+                        <div class="timeline-content">
+                            <h5 class="text-white mb-1">5. Threat Intelligence</h5>
+                            <p class="mb-0 text-secondary small">Understanding APTs, IoCs, and MITRE ATT&CK Framework.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+
+                <h4 class="mt-4 mb-3">Recommended Resources:</h4>
+                <div class="d-flex gap-3">
+                    <a href="#" class="btn btn-outline-info btn-sm">LetsDefend</a>
+                    <a href="#" class="btn btn-outline-info btn-sm">Blue Team Labs Online</a>
+                </div>
+            </div>
+        </div>
+
+        <!-- Purple Teaming -->
+        <div class="tab-pane fade" id="pills-purple" role="tabpanel">
+            <div class="glass p-5 border-left-purple">
+                <h2 class="text-purple mb-4" style="color: #a020f0;">Purple Teaming</h2>
+                <p class="lead mb-4">Bridge the gap between Red and Blue teams to improve overall security.</p>
+                <ul class="roadmap-list">
+                    <li>Master Offensive & Defensive concepts.</li>
+                    <li>Develop detection rules (Sigma/YARA).</li>
+                    <li>Emulate adversaries to test defenses (Breach & Attack Simulation).</li>
+                </ul>
+            </div>
+        </div>
+
+        <!-- SOC Analyst -->
+        <div class="tab-pane fade" id="pills-soc" role="tabpanel">
+            <div class="glass p-5 border-left-primary">
+                <h2 class="text-primary mb-4">SOC Analyst</h2>
+                <p class="lead mb-4">The frontline defenders monitoring security operations centers.</p>
+                <div class="timeline ml-3">
+                    <div class="timeline-item red">
+                        <div class="timeline-content">
+                            <h5 class="text-white mb-1">1. Log Analysis</h5>
+                            <p class="mb-0 text-secondary small">Reading Syslogs, Windows Events, understanding noise vs
+                                signal.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item red">
+                        <div class="timeline-content">
+                            <h5 class="text-white mb-1">2. Phishing Analysis</h5>
+                            <p class="mb-0 text-secondary small">Email header analysis, URL inspection, Sandbox
+                                execution.</p>
+                        </div>
+                    </div>
+                    <div class="timeline-item red">
+                        <div class="timeline-content">
+                            <h5 class="text-white mb-1">3. Ticket Handling</h5>
+                            <p class="mb-0 text-secondary small">Triage process, severity classification, escalation.
+                            </p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+    </div>
+
+    <div class="text-center mt-5">
+        <a href="{{ url_for('academy') }}" class="btn btn-secondary">← Back to Academy</a>
+    </div>
+</div>
+
+<style>
+    .nav-pills .nav-link.active {
+        background-color: var(--primary);
+        box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+    }
+
+    .nav-pills .nav-link {
+        color: var(--text-muted);
+        background: rgba(255, 255, 255, 0.05);
+        margin: 0 5px;
+        border-radius: 50px;
+    }
+
+    .border-left-danger {
+        border-left: 5px solid var(--danger);
+    }
+
+    .border-left-info {
+        border-left: 5px solid var(--info);
+    }
+
+    .border-left-purple {
+        border-left: 5px solid #a020f0;
+    }
+
+    .roadmap-list li {
+        margin-bottom: 10px;
+        position: relative;
+        padding-left: 20px;
+    }
+
+    .roadmap-list li:before {
+        content: '✓';
+        position: absolute;
+        left: 0;
+        color: var(--success);
+        font-weight: bold;
+    }
+</style>
+
+<!-- Bootstrap JS for Tabs (Required if not already included) -->
+<script src="https://code.jquery.com/jquery-3.5.1.slim.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/bootstrap@4.5.2/dist/js/bootstrap.bundle.min.js"></script>
+{% endblock %}

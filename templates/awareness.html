@@ -1,0 +1,133 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<div class="container fade-in">
+    <div class="text-center mb-5">
+        <h2 class="mb-3">🛡️ Cyber Awareness</h2>
+        <p class="text-secondary">Empower yourself with knowledge to stay safe in the digital world.</p>
+    </div>
+
+    <!-- Topics Grid -->
+    <div class="awareness-grid">
+
+        <!-- Topic 1: Phishing -->
+        <div class="awareness-card glass">
+            <div class="icon-header">🎣</div>
+            <h3>Phishing Attacks</h3>
+            <p>Phishing is a deceptive attempt to steal sensitive information like passwords or credit card numbers.</p>
+            <ul class="tips-list">
+                <li>✅ Verify the sender's email address.</li>
+                <li>✅ Hover over links to see the actual URL.</li>
+                <li>✅ Never share OTPs or passwords.</li>
+            </ul>
+        </div>
+
+        <!-- Topic 2: Strong Passwords -->
+        <div class="awareness-card glass">
+            <div class="icon-header">🔑</div>
+            <h3>Password Security</h3>
+            <p>Weak passwords are the easiest way for hackers to breach your accounts.</p>
+            <ul class="tips-list">
+                <li>✅ Use at least 12 characters.</li>
+                <li>✅ Mix uppercase, lowercase, numbers, & symbols.</li>
+                <li>✅ Use a unique password for every account.</li>
+            </ul>
+        </div>
+
+        <!-- Topic 3: Deepfakes -->
+        <div class="awareness-card glass">
+            <div class="icon-header">🎭</div>
+            <h3>Deepfakes & AI</h3>
+            <p>AI can create realistic fake videos and audio to impersonate people.</p>
+            <ul class="tips-list">
+                <li>✅ Check for unnatural blinking or lip-sync issues.</li>
+                <li>✅ Listen for robotic or monotonous audio.</li>
+                <li>✅ Verify suspicious requests through another channel.</li>
+            </ul>
+        </div>
+
+        <!-- Topic 4: Social Engineering -->
+        <div class="awareness-card glass">
+            <div class="icon-header">🗣️</div>
+            <h3>Social Engineering</h3>
+            <p>Manipulating people into giving up confidential information.</p>
+            <ul class="tips-list">
+                <li>✅ Be skeptical of urgent requests (e.g., "Act Now!").</li>
+                <li>✅ Verify the identity of unknown callers.</li>
+                <li>✅ Don't let fear dictate your actions.</li>
+            </ul>
+        </div>
+
+        <!-- Topic 5: Malware -->
+        <div class="awareness-card glass">
+            <div class="icon-header">🦠</div>
+            <h3>Malware & Ransomware</h3>
+            <p>Malicious software designed to harm or exploit your device.</p>
+            <ul class="tips-list">
+                <li>✅ Keep your OS and antivirus updated.</li>
+                <li>✅ Don't download files from untrusted sources.</li>
+                <li>✅ Regularly backup your important data.</li>
+            </ul>
+        </div>
+
+        <!-- Topic 6: Public Wi-Fi -->
+        <div class="awareness-card glass">
+            <div class="icon-header">📶</div>
+            <h3>Public Wi-Fi Risks</h3>
+            <p>Public networks are often unsecured and easy to intercept.</p>
+            <ul class="tips-list">
+                <li>✅ Avoid banking or shopping on public Wi-Fi.</li>
+                <li>✅ Use a VPN to encrypt your connection.</li>
+                <li>✅ Turn off "Auto-Connect" for Wi-Fi.</li>
+            </ul>
+        </div>
+
+    </div>
+
+    <div class="mt-5 text-center">
+        <a href="{{ url_for('dashboard') }}" class="btn-secondary">← Back to Dashboard</a>
+    </div>
+</div>
+
+<style>
+    .awareness-grid {
+        display: grid;
+        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+        gap: 2rem;
+    }
+
+    .awareness-card {
+        padding: 2rem;
+        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+    }
+
+    .awareness-card:hover {
+        transform: translateY(-5px);
+        box-shadow: 0 10px 20px rgba(157, 80, 187, 0.2);
+        /* Purple Glow */
+        border-color: var(--secondary-accent);
+    }
+
+    .icon-header {
+        font-size: 3rem;
+        margin-bottom: 1rem;
+    }
+
+    .tips-list {
+        list-style: none;
+        padding: 0;
+        margin-top: 1.5rem;
+        text-align: left;
+    }
+
+    .tips-list li {
+        margin-bottom: 0.8rem;
+        font-size: 0.9rem;
+        color: var(--text-secondary);
+        display: flex;
+        align-items: flex-start;
+        gap: 0.5rem;
+    }
+</style>
+{% endblock %}

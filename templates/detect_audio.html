@@ -1,0 +1,56 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="detection-container">
+    <div class="glass p-4" style="max-width: 800px; margin: 0 auto;">
+        <h2 class="text-center mb-4">Audio Deepfake Detection</h2>
+
+        <form method="POST" enctype="multipart/form-data" class="upload-area">
+            <div class="drop-zone" onclick="document.getElementById('fileInput').click()">
+                <div class="icon">🎙️</div>
+                <p>Drag & Drop or Click to Upload Audio (MP3, WAV)</p>
+                <input type="file" name="file" accept="audio/*" id="fileInput" hidden required>
+            </div>
+
+            <p id="fileName" class="text-center mt-2 text-secondary"></p>
+
+            <button type="submit" class="btn-primary mt-4" style="width: 100%;"
+                onclick="this.innerHTML='Analyzing...'">Analyze Audio</button>
+        </form>
+
+        {% if result %}
+        <div class="result-box glass mt-4 {{ 'alert-error' if result.result == 'Fake' else 'alert-success' }}">
+            <h3 class="text-center">Detection Result: {{ result.result }}</h3>
+            <div class="result-details mt-2">
+                <p><strong>Confidence:</strong> {{ result.confidence }}%</p>
+                <p><strong>Analysis:</strong> {{ result.details }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .drop-zone {
+        border: 2px dashed var(--glass-border);
+        border-radius: 12px;
+        padding: 3rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .drop-zone:hover {
+        border-color: var(--primary-accent);
+        background: rgba(255, 255, 255, 0.05);
+    }
+</style>
+
+<script>
+    document.getElementById('fileInput').addEventListener('change', function () {
+        if (this.files && this.files[0]) {
+            document.getElementById('fileName').textContent = 'Selected: ' + this.files[0].name;
+        }
+    });
+</script>
+{% endblock %}

@@ -1,0 +1,78 @@
+{% extends "base.html" %}
+
+{% block content %}
+<div class="detection-container">
+    <div class="glass p-4" style="max-width: 800px; margin: 0 auto;">
+        <h2 class="text-center mb-4">Image Deepfake Detection</h2>
+
+        <form method="POST" enctype="multipart/form-data" class="upload-area" id="uploadForm">
+            <div class="drop-zone" id="dropZone">
+                <div class="icon">📸</div>
+                <p>Drag & Drop or Click to Upload Image</p>
+                <input type="file" name="file" accept="image/*" id="fileInput" hidden required>
+            </div>
+
+            <div id="previewArea" class="mt-4 hidden text-center">
+                <img id="imagePreview" src="" alt="Preview" style="max-height: 300px; border-radius: 8px;">
+                <p id="fileName" class="text-secondary mt-2"></p>
+            </div>
+
+            <button type="submit" class="btn-primary mt-4" style="width: 100%;"
+                onclick="this.innerHTML='Analyzing...'">Analyze Image</button>
+        </form>
+
+        {% if result %}
+        <div class="result-box glass mt-4 {{ 'alert-error' if result.result == 'Fake' else 'alert-success' }}">
+            <h3 class="text-center">Detection Result: {{ result.result }}</h3>
+            <div class="result-details mt-2">
+                <p><strong>Confidence:</strong> {{ result.confidence }}%</p>
+                <p><strong>Analysis:</strong> {{ result.details }}</p>
+            </div>
+        </div>
+        {% endif %}
+    </div>
+</div>
+
+<style>
+    .drop-zone {
+        border: 2px dashed var(--glass-border);
+        border-radius: 12px;
+        padding: 3rem;
+        text-align: center;
+        cursor: pointer;
+        transition: all 0.3s;
+    }
+
+    .drop-zone:hover {
+        border-color: var(--primary-accent);
+        background: rgba(255, 255, 255, 0.05);
+    }
+
+    .hidden {
+        display: none;
+    }
+</style>
+
+<script>
+    const dropZone = document.getElementById('dropZone');
+    const fileInput = document.getElementById('fileInput');
+    const previewArea = document.getElementById('previewArea');
+    const imagePreview = document.getElementById('imagePreview');
+    const fileName = document.getElementById('fileName');
+
+    dropZone.addEventListener('click', () => fileInput.click());
+
+    fileInput.addEventListener('change', function () {
+        if (this.files && this.files[0]) {
+            const file = this.files[0];
+            fileName.textContent = file.name;
+            const reader = new FileReader();
+            reader.onload = function (e) {
+                imagePreview.src = e.target.result;
+                previewArea.classList.remove('hidden');
+            }
+            reader.readAsDataURL(file);
+        }
+    });
+</script>
+{% endblock %}
