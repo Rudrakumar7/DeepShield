@@ -7,3 +7,4 @@ class Config:
     SQLALCHEMY_TRACK_MODIFICATIONS = False
     UPLOAD_FOLDER = os.path.join(os.getcwd(), 'static', 'uploads')
     MAX_CONTENT_LENGTH = 16 * 1024 * 1024  # 16MB max upload size
+    GEMINI_API_KEY = os.environ.get('GEMINI_API_KEY')
