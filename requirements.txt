@@ -11,3 +11,7 @@ Pillow
 moviepy
 librosa
 google-generativeai
+xgboost
+scikit-learn
+pandas
+requests
