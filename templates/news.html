@@ -4,23 +4,60 @@
 <div class="container fade-in">
     <div class="text-center mb-5">
         <h2 class="mb-3">📰 Cyber News Feed</h2>
-        <p class="text-secondary">Latest cybersecurity updates from around the web.</p>
+        <p class="text-secondary">Real-time cybersecurity updates, threats, and vulnerabilities.</p>
     </div>
 
     <div class="news-grid">
         {% for article in news %}
-        <div class="glass p-4 news-card">
-            <div class="d-flex justify-content-between align-items-center mb-2">
-                <span class="badge badge-primary">{{ article.source }}</span>
+        <div class="glass p-4 news-card {% if article.severity == 'Critical' %}border-critical{% endif %}">
+
+            <!-- Header: Source & Date -->
+            <div class="d-flex justify-content-between align-items-center mb-3">
+                <span class="badge bg-secondary opacity-75">{{ article.source }}</span>
                 <small class="text-secondary">{{ article.published }}</small>
             </div>
-            <h4 class="mb-3">{{ article.title }}</h4>
-            <p class="text-secondary mb-4">{{ article.summary }}</p>
-            <a href="{{ article.link }}" target="_blank" class="btn btn-outline-primary btn-sm">Read Full Article →</a>
+
+            <!-- Title -->
+            <h4 class="mb-3">
+                <a href="{{ article.link }}" target="_blank" class="text-decoration-none text-light stretched-link">
+                    {{ article.title }}
+                </a>
+            </h4>
+
+            <!-- Badges: Severity & Category -->
+            <div class="mb-3">
+                {% if article.severity == 'Critical' %}
+                <span class="badge bg-danger">Critical</span>
+                {% elif article.severity == 'High' %}
+                <span class="badge bg-warning text-dark">High</span>
+                {% elif article.severity == 'Medium' %}
+                <span class="badge bg-info text-dark">Medium</span>
+                {% else %}
+                <span class="badge bg-secondary">Low</span>
+                {% endif %}
+
+                <span class="badge border border-secondary text-secondary ms-2">{{ article.category }}</span>
+            </div>
+
+            <!-- Summary -->
+            <p class="text-secondary mb-4 card-text">{{ article.summary }}</p>
+
+            <!-- Footer: Read More & Score -->
+            <div class="mt-auto d-flex justify-content-between align-items-center">
+                <span class="text-primary" style="z-index: 2; position: relative;">Read Full Article →</span>
+
+                <!-- Importance Score Tooltip -->
+                <div class="text-muted" title="Importance Score: {{ article.importance_score }}/100">
+                    <small>Impact: {{ article.importance_score }}</small>
+                </div>
+            </div>
         </div>
         {% else %}
-        <div class="col-12 text-center">
-            <p>No news available at the moment.</p>
+        <div class="col-12 text-center p-5">
+            <div class="glass p-5">
+                <h3>No news available right now.</h3>
+                <p class="text-secondary">Please check back later or verify your internet connection.</p>
+            </div>
         </div>
         {% endfor %}
     </div>
@@ -42,8 +79,9 @@
         height: 100%;
         display: flex;
         flex-direction: column;
-        justify-content: space-between;
         border: 1px solid rgba(255, 255, 255, 0.05);
+        position: relative;
+        /* For stretched-link */
     }
 
     .news-card:hover {
@@ -52,12 +90,21 @@
         border-color: var(--primary-accent);
     }
 
-    .badge-primary {
-        background: rgba(0, 243, 255, 0.1);
-        color: var(--primary-accent);
-        padding: 0.25rem 0.5rem;
-        border-radius: 4px;
-        font-size: 0.8rem;
+    /* Critical Severity Styling */
+    .border-critical {
+        border-color: rgba(220, 53, 69, 0.4) !important;
+        box-shadow: 0 0 15px rgba(220, 53, 69, 0.1);
     }
+
+    .card-text {
+        flex-grow: 1;
+        font-size: 0.95rem;
+        line-height: 1.5;
+    }
+
+    /* Ensure badges don't overlap with stretched link click area if needed, 
+       but usually we want the whole card clickable. 
+       If we want specific clicks, we'd remove stretched-link from title.
+       Here, whole card click is good UX. */
 </style>
 {% endblock %}

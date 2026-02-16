@@ -2,6 +2,7 @@ import os
 import requests
 import pandas as pd
 import io
+import numpy as np
 from utils.phishing_model import PhishingClassifier
 
 def fetch_hf_dataset():
@@ -46,37 +47,80 @@ def load_local_datasets():
         try:
             df = None
             if filename.endswith('.csv'):
-                df = pd.read_csv(filepath)
+                # Handle potential parsing errors
+                try:
+                    df = pd.read_csv(filepath)
+                except:
+                    try:
+                         df = pd.read_csv(filepath, encoding='latin1')
+                    except:
+                        print(f"  -> Could not read {filename} with utf-8 or latin1. Skipping.")
+                        continue
+
             elif filename.endswith('.xlsx') or filename.endswith('.xls'):
-                df = pd.read_excel(filepath)
+                try:
+                    df = pd.read_excel(filepath)
+                except Exception as e:
+                    print(f"  -> Skipping Excel file {filename}: {e}")
+                    continue
             
             if df is not None:
                 print(f"Loading {filename}...")
                 
-                # Simple heuristic to find URL and Label columns
-                # Adjust these based on specific dataset formats if needed
+                # Normalize column names to lower case for easier matching
+                df.columns = [c.strip() for c in df.columns]
+                
+                # Identify URL column
                 url_col = next((c for c in df.columns if 'url' in c.lower()), None)
-                label_col = next((c for c in df.columns if 'label' in c.lower() or 'type' in c.lower() or 'class' in c.lower() or 'status' in c.lower()), None)
+                
+                # Identify Label column
+                # Common names: label, type, class, status, ClassLabel
+                label_col = next((c for c in df.columns if any(x in c.lower() for x in ['label', 'type', 'class', 'status'])), None)
                 
                 if url_col and label_col:
                     df = df.rename(columns={url_col: 'url'})
                     
-                    # Specific handling for known datasets
-                    if 'phiusiil' in filename.lower() or 'legitphish' in filename.lower():
-                        # In these datasets: 0 = Phishing, 1 = Legitimate
-                        # We want: 1 = Phishing, 0 = Legitimate
-                        print(f"  -> Inverting labels for {filename} (assuming 0=Phishing, 1=Legit)...")
-                        df['label'] = df[label_col].apply(lambda x: 0 if str(x) == '1' or str(x).lower() == 'legitimate' else 1)
+                    # --- Specific Dataset Handling ---
+                    
+                    # 1. PhiUSIIL & url_features_extracted1.csv & MyDataSET.xlsx
+                    # Findings: 
+                    # - PhiUSIIL: 1=Legit (StackOverflow), 0=Phishing (Suspicious Google Docs).
+                    # - Features: Same.
+                    # - MyDataSET: 1=Legit (Wikipedia), 0=Phishing.
+                    # We want: 1=Phishing, 0=Legit.
+                    # So we must INVERT: 1 -> 0, 0 -> 1.
+                    if 'phiusiil' in filename.lower() or 'features' in filename.lower() or 'mydataset' in filename.lower():
+                        print(f"  -> Processing {filename} (INVERTING: 1=Legit->0, 0=Phish->1)...")
+                        # Ensure numeric
+                        df['label'] = pd.to_numeric(df[label_col], errors='coerce').fillna(0).astype(int)
+                        # Invert
+                        df['label'] = df['label'].apply(lambda x: 0 if x == 1 else 1)
+
+                    # 2. Phishing URLs.csv
+                    # Analysis: "Phishing" -> 1, "Legitimate" -> 0. (Correct as is)
+                    elif 'phishing urls.csv' in filename.lower():
+                         print(f"  -> Processing {filename} (Phishing=1, Legitimate=0)...")
+                         df['label'] = df[label_col].apply(lambda x: 1 if str(x).strip().lower() == 'phishing' else 0)
+
+                    # 3. URL dataset.csv
+                    # Analysis: "phishing" -> 1, "legitimate" -> 0. (Correct as is)
+                    elif 'url dataset.csv' in filename.lower():
+                        print(f"  -> Processing {filename} (legitimate=0, phishing=1)...")
+                        df['label'] = df[label_col].apply(lambda x: 1 if str(x).strip().lower() == 'phishing' else 0)
+
+                    # 4. Default Heuristic
                     else:
-                        # Default handling (1=Phishing, 'phishing'=Phishing)
-                        # Helper to normalize label values
+                        print(f"  -> Processing {filename} with generic heuristic...")
                         def normalize_label(val):
                             s = str(val).lower().strip()
                             if s in ['1', 'phishing', 'bad', 'malicious', 'unsafe']:
                                 return 1
                             if s in ['0', 'legitimate', 'safe', 'good', 'benign']:
                                 return 0
-                            return 0 # Default to safe if unsure
+                             # Some datasets use -1 for phishing or legit.
+                            if s == '-1': 
+                                return 1 # Assumption
+                            return 0 
                             
                         df['label'] = df[label_col].apply(normalize_label)
                     
@@ -111,15 +155,23 @@ def main():
     print(f"Phishing samples: {len(final_df[final_df['label'] == 1])}")
     print(f"Legit samples: {len(final_df[final_df['label'] == 0])}")
 
+    # DEBUG: Check labels for known safe sites
+    print("\n--- DEBUG: Label Check ---")
+    safe_sites = ['google.com', 'youtube.com', 'wikipedia.org', 'amazon.com', 'stackoverflow.com']
+    for site in safe_sites:
+        matches = final_df[final_df['url'].str.contains(site, case=False, na=False)]
+        if not matches.empty:
+            print(f"Samples for {site}:")
+            print(matches[['url', 'label']].head(5))
+            print(f"  -> Avg Label (should be near 0): {matches['label'].mean():.2f}")
+    print("--------------------------\n")
+
     # 2. Train Model
-    # To save time for this demo, let's sample if dataset is huge.
-    if len(final_df) > 5000:
-        print("Dataset > 5000. Sampling 5000 for quick training (since user is waiting).")
-        # Ensure balanced sample
-        phish = final_df[final_df['label'] == 1]
-        legit = final_df[final_df['label'] == 0]
-        n = min(len(phish), len(legit), 2500)
-        final_df = pd.concat([phish.sample(n), legit.sample(n)]).sample(frac=1).reset_index(drop=True)
+    # Removed 5000 row limit. Training on full dataset.
+    print("Starting training on full dataset...")
+    
+    # Optional: If dataset is MASSIVE (>500k), maybe warn or sample. 
+    # But user asked to train on provided datasets, so we use all.
 
     classifier = PhishingClassifier()
     classifier.train(final_df)

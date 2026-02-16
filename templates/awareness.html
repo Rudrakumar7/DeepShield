@@ -2,132 +2,690 @@
 
 {% block content %}
 <div class="container fade-in">
+
+    <!-- Header -->
     <div class="text-center mb-5">
-        <h2 class="mb-3">🛡️ Cyber Awareness</h2>
-        <p class="text-secondary">Empower yourself with knowledge to stay safe in the digital world.</p>
+        <h2 class="mb-3">🛡️ Cyber Awareness Hub</h2>
+        <p class="text-secondary">Track your progress, earn badges, and master cybersecurity.</p>
     </div>
 
-    <!-- Topics Grid -->
-    <div class="awareness-grid">
-
-        <!-- Topic 1: Phishing -->
-        <div class="awareness-card glass">
-            <div class="icon-header">🎣</div>
-            <h3>Phishing Attacks</h3>
-            <p>Phishing is a deceptive attempt to steal sensitive information like passwords or credit card numbers.</p>
-            <ul class="tips-list">
-                <li>✅ Verify the sender's email address.</li>
-                <li>✅ Hover over links to see the actual URL.</li>
-                <li>✅ Never share OTPs or passwords.</li>
-            </ul>
+    <!-- Stats & Tip Row -->
+    <div class="row mb-5">
+        <!-- Daily Tip -->
+        <div class="col-md-8">
+            <div class="glass p-4 h-100 d-flex align-items-center">
+                <span class="fs-1 me-3">💡</span>
+                <div>
+                    <h5 class="text-primary-accent mb-1">Security Tip of the Day</h5>
+                    <p class="mb-0 text-light fst-italic">"{{ daily_tip }}"</p>
+                </div>
+            </div>
         </div>
 
-        <!-- Topic 2: Strong Passwords -->
-        <div class="awareness-card glass">
-            <div class="icon-header">🔑</div>
-            <h3>Password Security</h3>
-            <p>Weak passwords are the easiest way for hackers to breach your accounts.</p>
-            <ul class="tips-list">
-                <li>✅ Use at least 12 characters.</li>
-                <li>✅ Mix uppercase, lowercase, numbers, & symbols.</li>
-                <li>✅ Use a unique password for every account.</li>
-            </ul>
+        <!-- Overall Rank -->
+        <div class="col-md-4">
+            <div class="glass p-4 h-100 text-center">
+                <h5 class="text-secondary">Security Maturity</h5>
+                <div class="display-4 fw-bold text-gradient" id="maturityScoreDisplay">0</div>
+                <small class="text-secondary">Level: <span id="maturityLevel">Novice</span></small>
+            </div>
+        </div>
+    </div>
+
+    <!-- Navigation Tabs -->
+    <ul class="nav nav-pills mb-4 justify-content-center" id="awarenessTabs" role="tablist">
+        <li class="nav-item" role="presentation">
+            <button class="nav-link active glass-tab" id="dashboard-tab" data-bs-toggle="pill"
+                data-bs-target="#dashboard" type="button" role="tab">📊 Dashboard</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link glass-tab" id="topics-tab" data-bs-toggle="pill" data-bs-target="#topics"
+                type="button" role="tab">📚 Lessons</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link glass-tab" id="checklist-tab" data-bs-toggle="pill" data-bs-target="#checklist"
+                type="button" role="tab">✅ Checklist</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link glass-tab" id="risk-tab" data-bs-toggle="pill" data-bs-target="#risk" type="button"
+                role="tab">⚠️ Risk Score</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link glass-tab" id="cases-tab" data-bs-toggle="pill" data-bs-target="#cases"
+                type="button" role="tab">🕵️ Case Studies</button>
+        </li>
+        <li class="nav-item" role="presentation">
+            <button class="nav-link glass-tab" id="glossary-tab" data-bs-toggle="pill" data-bs-target="#glossary"
+                type="button" role="tab">📖 Glossary</button>
+        </li>
+    </ul>
+
+    <!-- Tab Content -->
+    <div class="tab-content" id="awarenessTabContent">
+
+        <!-- DASHBOARD TAB -->
+        <div class="tab-pane fade show active" id="dashboard" role="tabpanel">
+            <div class="row">
+                <!-- Charts -->
+                <div class="col-md-6 mb-4">
+                    <div class="glass p-4" style="height: 350px;">
+                        <h5 class="mb-3">Skills Breakdown</h5>
+                        <canvas id="skillsChart"></canvas>
+                    </div>
+                </div>
+
+                <!-- Badges -->
+                <div class="col-md-6 mb-4">
+                    <div class="glass p-4" style="height: 350px; overflow-y: auto;">
+                        <h5 class="mb-3">Your Achievements</h5>
+                        <div class="row">
+                            {% for badge in badges %}
+                            <div class="col-6 mb-3 text-center badge-item" id="badge-{{ badge.id }}"
+                                style="opacity: 0.3; filter: grayscale(1);">
+                                <div class="fs-1 mb-2">{{ badge.icon }}</div>
+                                <h6 class="mb-0">{{ badge.title }}</h6>
+                                <small class="text-secondary">{{ badge.desc }}</small>
+                            </div>
+                            {% endfor %}
+                        </div>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Topic 3: Deepfakes -->
-        <div class="awareness-card glass">
-            <div class="icon-header">🎭</div>
-            <h3>Deepfakes & AI</h3>
-            <p>AI can create realistic fake videos and audio to impersonate people.</p>
-            <ul class="tips-list">
-                <li>✅ Check for unnatural blinking or lip-sync issues.</li>
-                <li>✅ Listen for robotic or monotonous audio.</li>
-                <li>✅ Verify suspicious requests through another channel.</li>
-            </ul>
+        <!-- TOPICS TAB (LESSONS) -->
+        <div class="tab-pane fade" id="topics" role="tabpanel">
+            <div class="d-flex justify-content-between mb-4 flex-wrap gap-2">
+                <input type="text" id="lessonSearch" class="form-control bg-dark text-light border-secondary"
+                    style="max-width: 300px;" placeholder="Search lessons..." onkeyup="filterLessons()">
+
+                <div class="btn-group">
+                    <button class="btn btn-outline-secondary btn-sm active"
+                        onclick="filterDifficulty('all')">All</button>
+                    <button class="btn btn-outline-secondary btn-sm"
+                        onclick="filterDifficulty('Beginner')">Beginner</button>
+                    <button class="btn btn-outline-secondary btn-sm"
+                        onclick="filterDifficulty('Intermediate')">Intermediate</button>
+                    <button class="btn btn-outline-secondary btn-sm"
+                        onclick="filterDifficulty('Advanced')">Advanced</button>
+                </div>
+            </div>
+
+            <div class="row" id="lessonGrid">
+                {% for topic in topics %}
+                <div class="col-md-6 mb-4 lesson-card" data-title="{{ topic.title }}"
+                    data-difficulty="{{ topic.difficulty }}">
+                    <div class="glass p-4 h-100 d-flex flex-column position-relative">
+                        <!-- Header -->
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div class="d-flex align-items-center">
+                                <span class="fs-2 me-3">{{ topic.icon }}</span>
+                                <div>
+                                    <h4 class="mb-0">{{ topic.title }}</h4>
+                                    <span class="badge bg-secondary opacity-75">{{ topic.difficulty }}</span>
+                                    <small class="text-secondary ms-2">⏱️ {{ topic.read_time }}</small>
+                                </div>
+                            </div>
+                            <!-- Completion Check -->
+                            <div class="completion-check text-success display-6 d-none" id="check-{{ loop.index0 }}">
+                                <i class="fa-solid fa-circle-check"></i>
+                            </div>
+                        </div>
+
+                        <!-- Content Preview -->
+                        <p class="text-secondary mb-3">{{ topic.overview }}</p>
+
+                        <!-- Tags -->
+                        <div class="mb-3">
+                            {% for tag in topic.tags %}
+                            <span class="badge border border-secondary text-secondary me-1">{{ tag }}</span>
+                            {% endfor %}
+                        </div>
+
+                        <!-- Actions -->
+                        <div class="mt-auto d-flex gap-2">
+                            <button class="btn btn-outline-primary btn-sm flex-grow-1" type="button"
+                                data-bs-toggle="collapse" data-bs-target="#expand{{ loop.index0 }}">
+                                Start Lesson
+                            </button>
+                            <button class="btn btn-success btn-sm mark-complete-btn" data-idx="{{ loop.index0 }}">
+                                Mark Complete
+                            </button>
+                        </div>
+
+                        <!-- Collapsible Content -->
+                        <div class="collapse mt-3" id="expand{{ loop.index0 }}">
+                            <div class="card card-body bg-transparent border-secondary ps-0 pe-0">
+                                <h6 class="text-danger">Why it Matters</h6>
+                                <p>{{ topic.why_matters }}</p>
+
+                                <h6 class="text-success mt-3">Prevention Checklist</h6>
+                                <ul class="prevention-list mb-3">
+                                    {% for prev in topic.prevention %}
+                                    <li>🛡️ {{ prev }}</li>
+                                    {% endfor %}
+                                </ul>
+
+                                <!-- Quiz Trigger -->
+                                <button class="btn btn-light btn-sm w-100 start-quiz-btn"
+                                    data-idx="{{ loop.index0 }}">Take
+                                    Quiz</button>
+                            </div>
+                        </div>
+
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
 
-        <!-- Topic 4: Social Engineering -->
-        <div class="awareness-card glass">
-            <div class="icon-header">🗣️</div>
-            <h3>Social Engineering</h3>
-            <p>Manipulating people into giving up confidential information.</p>
-            <ul class="tips-list">
-                <li>✅ Be skeptical of urgent requests (e.g., "Act Now!").</li>
-                <li>✅ Verify the identity of unknown callers.</li>
-                <li>✅ Don't let fear dictate your actions.</li>
-            </ul>
+        <!-- CHECKLIST TAB (Existing Logic) -->
+        <div class="tab-pane fade" id="checklist" role="tabpanel">
+            <div class="glass p-5">
+                <div class="d-flex justify-content-between align-items-center mb-4">
+                    <h3>Personal Security Audit</h3>
+                    <div class="text-end">
+                        <span class="h2 text-primary-accent" id="progressText">0%</span>
+                        <p class="small text-secondary mb-0">Secure</p>
+                    </div>
+                </div>
+
+                <div class="progress mb-4" style="height: 10px;">
+                    <div class="progress-bar bg-success" id="securityProgress" role="progressbar" style="width: 0%">
+                    </div>
+                </div>
+
+                <div class="checklist-container">
+                    {% for item in checklist %}
+                    <div class="form-check custom-checkbox mb-3 p-3 glass-hover rounded position-relative">
+                        <input class="form-check-input security-check" type="checkbox" value=""
+                            id="check{{ loop.index }}" onchange="updateProgress()">
+                        <label class="form-check-label w-100 stretched-link" for="check{{ loop.index }}">
+                            {{ item }}
+                        </label>
+                    </div>
+                    {% endfor %}
+                </div>
+
+                <div class="mt-4 text-center">
+                    <button class="btn btn-outline-light btn-sm" onclick="resetChecklist()">Reset Progress</button>
+                </div>
+            </div>
         </div>
 
-        <!-- Topic 5: Malware -->
-        <div class="awareness-card glass">
-            <div class="icon-header">🦠</div>
-            <h3>Malware & Ransomware</h3>
-            <p>Malicious software designed to harm or exploit your device.</p>
-            <ul class="tips-list">
-                <li>✅ Keep your OS and antivirus updated.</li>
-                <li>✅ Don't download files from untrusted sources.</li>
-                <li>✅ Regularly backup your important data.</li>
-            </ul>
+        <!-- RISK SCORE TAB (Existing Logic) -->
+        <div class="tab-pane fade" id="risk" role="tabpanel">
+            <div class="row justify-content-center">
+                <div class="col-md-8">
+                    <div class="glass p-5 text-center" id="riskQuiz">
+                        <h3>Risk Assessment Calculator</h3>
+                        <div class="mb-4 text-start">
+                            <label class="form-label">1. Do you use the same password for multiple accounts?</label>
+                            <select class="form-select bg-dark text-light border-secondary" id="q1">
+                                <option value="10">Yes, everywhere.</option>
+                                <option value="5">Sometimes.</option>
+                                <option value="0">No, never.</option>
+                            </select>
+                        </div>
+                        <div class="mb-4 text-start">
+                            <label class="form-label">2. How often do you install software updates?</label>
+                            <select class="form-select bg-dark text-light border-secondary" id="q2">
+                                <option value="10">Rarely / Never.</option>
+                                <option value="5">When I remember.</option>
+                                <option value="0">Immediately / Automatic.</option>
+                            </select>
+                        </div>
+                        <div class="mb-4 text-start">
+                            <label class="form-label">3. Do you check the sender email before clicking links?</label>
+                            <select class="form-select bg-dark text-light border-secondary" id="q3">
+                                <option value="10">No, I just click.</option>
+                                <option value="5">Sometimes.</option>
+                                <option value="0">Always.</option>
+                            </select>
+                        </div>
+                        <button class="btn btn-primary w-100" onclick="calculateRisk()">Check My Risk</button>
+                    </div>
+
+                    <div class="glass p-5 text-center d-none" id="riskResult">
+                        <h3>Your Risk Level</h3>
+                        <div class="display-1 fw-bold my-4" id="riskScoreVal">--</div>
+                        <p id="riskMessage" class="lead"></p>
+                        <button class="btn btn-outline-light mt-3" onclick="resetRisk()">Retake Quiz</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
-        <!-- Topic 6: Public Wi-Fi -->
-        <div class="awareness-card glass">
-            <div class="icon-header">📶</div>
-            <h3>Public Wi-Fi Risks</h3>
-            <p>Public networks are often unsecured and easy to intercept.</p>
-            <ul class="tips-list">
-                <li>✅ Avoid banking or shopping on public Wi-Fi.</li>
-                <li>✅ Use a VPN to encrypt your connection.</li>
-                <li>✅ Turn off "Auto-Connect" for Wi-Fi.</li>
-            </ul>
+        <!-- CASE STUDIES TAB -->
+        <div class="tab-pane fade" id="cases" role="tabpanel">
+            <div class="row">
+                {% for case in cases %}
+                <div class="col-md-6 mb-4">
+                    <div class="glass p-4 h-100 d-flex flex-column">
+                        <div class="d-flex justify-content-between mb-3">
+                            <h4 class="mb-0">{{ case.title }}</h4>
+                            <span class="badge bg-secondary">{{ case.date }}</span>
+                        </div>
+                        <p class="text-secondary">{{ case.what_happened }}</p>
+                        <div class="mt-auto">
+                            <p class="mb-1"><strong class="text-danger">Impact:</strong> {{ case.impact }}</p>
+                            <p class="mb-0"><strong class="text-success">Lesson:</strong> {{ case.lessons }}</p>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <!-- GLOSSARY TAB -->
+        <div class="tab-pane fade" id="glossary" role="tabpanel">
+            <div class="glass p-4 mb-4">
+                <input type="text" id="glossarySearch" class="form-control bg-dark text-light border-secondary"
+                    placeholder="Search terms..." onkeyup="filterGlossary()">
+            </div>
+
+            <div class="row" id="glossaryGrid">
+                {% for term, def in glossary.items() %}
+                <div class="col-md-4 mb-3 glossary-item">
+                    <div class="glass p-3 h-100">
+                        <h5 class="term-title text-primary-accent">{{ term }}</h5>
+                        <p class="small text-secondary mb-0">{{ def }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+            </div>
         </div>
 
     </div>
 
-    <div class="mt-5 text-center">
-        <a href="{{ url_for('dashboard') }}" class="btn-secondary">← Back to Dashboard</a>
+    <!-- Quiz Modal -->
+    <div class="modal fade" id="quizModal" tabindex="-1" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+            <div class="modal-content glass">
+                <div class="modal-header border-bottom-0">
+                    <h5 class="modal-title">Mini Quiz</h5>
+                    <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"
+                        aria-label="Close"></button>
+                </div>
+                <div class="modal-body" id="quizBody">
+                    <!-- Dynamic Content -->
+                </div>
+            </div>
+        </div>
     </div>
 </div>
 
+<!-- Chart.js -->
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+<!-- Data from Backend -->
+<script id="topics-data" type="application/json">{{ topics | tojson }}</script>
+<script id="badges-data" type="application/json">{{ badges | tojson }}</script>
+
+<script>
+    // --- Data from Backend ---
+    const TOPICS_DATA = JSON.parse(document.getElementById('topics-data').textContent);
+    const BADGES_DATA = JSON.parse(document.getElementById('badges-data').textContent);
+
+    // --- State ---
+    let completedLessons = JSON.parse(localStorage.getItem('completedLessons') || '[]');
+    let earnedBadges = JSON.parse(localStorage.getItem('earnedBadges') || '[]');
+
+    // --- Init ---
+    document.addEventListener('DOMContentLoaded', () => {
+        loadChecklist();
+        renderLessonCompletion();
+        checkBadges();
+        updateMaturityScore();
+        initChart();
+
+        // Event Delegation
+        document.body.addEventListener('click', (e) => {
+            if (e.target.classList.contains('mark-complete-btn')) {
+                markComplete(parseInt(e.target.dataset.idx));
+            }
+            if (e.target.classList.contains('start-quiz-btn')) {
+                startQuiz(parseInt(e.target.dataset.idx));
+            }
+        });
+
+        // Load Risk Score if exists
+        const savedRisk = localStorage.getItem('riskScoreVal');
+        if (savedRisk) {
+            // Optional: Restore risk view
+        }
+    });
+
+    // --- Lesson Logic ---
+    function markComplete(index) {
+        if (!completedLessons.includes(index)) {
+            completedLessons.push(index);
+            localStorage.setItem('completedLessons', JSON.stringify(completedLessons));
+            renderLessonCompletion();
+            checkBadges();
+            updateMaturityScore();
+            alert("Lesson Marked Complete!");
+        }
+    }
+
+    function renderLessonCompletion() {
+        completedLessons.forEach(idx => {
+            const check = document.getElementById(`check-${idx}`);
+            if (check) check.classList.remove('d-none');
+        });
+    }
+
+    function filterLessons() {
+        const query = document.getElementById('lessonSearch').value.toLowerCase();
+        const cards = document.querySelectorAll('.lesson-card');
+        cards.forEach(card => {
+            const title = card.getAttribute('data-title').toLowerCase();
+            card.style.display = title.includes(query) ? 'block' : 'none';
+        });
+    }
+
+    function filterDifficulty(diff) {
+        const cards = document.querySelectorAll('.lesson-card');
+        const buttons = document.querySelectorAll('.btn-group button');
+
+        // Toggle active button
+        buttons.forEach(btn => btn.classList.remove('active'));
+        event.target.classList.add('active');
+
+        cards.forEach(card => {
+            const d = card.getAttribute('data-difficulty');
+            if (diff === 'all' || d === diff) {
+                card.style.display = 'block';
+            } else {
+                card.style.display = 'none';
+            }
+        });
+    }
+
+    // --- Gamification Logic ---
+    function checkBadges() {
+        const newBadges = [];
+
+        // Badge 1: Novice Guardian (1 lesson)
+        if (completedLessons.length >= 1 && !hasBadge('novice_guardian')) {
+            newBadges.push('novice_guardian');
+        }
+
+        // Badge 2: Cyber Scholar (All lessons)
+        if (completedLessons.length >= TOPICS_DATA.length && !hasBadge('cyber_scholar')) {
+            newBadges.push('cyber_scholar');
+        }
+
+        // Unlock badges
+        newBadges.forEach(bid => {
+            earnedBadges.push(bid);
+            alert(`🏆 New Badge Unlocked: ${getBadgeName(bid)}!`);
+        });
+
+        localStorage.setItem('earnedBadges', JSON.stringify(earnedBadges));
+        renderBadges();
+    }
+
+    function hasBadge(id) {
+        return earnedBadges.includes(id);
+    }
+
+    function getBadgeName(id) {
+        const b = BADGES_DATA.find(x => x.id === id);
+        return b ? b.title : id;
+    }
+
+    function renderBadges() {
+        earnedBadges.forEach(bid => {
+            const el = document.getElementById(`badge-${bid}`);
+            if (el) {
+                el.style.opacity = '1';
+                el.style.filter = 'none';
+                el.classList.add('text-primary-accent');
+            }
+        });
+    }
+
+    // --- Quiz Logic ---
+    function startQuiz(idx) {
+        const topic = TOPICS_DATA[idx];
+        const quiz = topic.quiz;
+        if (!quiz || quiz.length === 0) {
+            alert("No quiz available for this topic yet.");
+            return;
+        }
+
+        // Simple Quiz Rendering (First question only for demo)
+        const q = quiz[0];
+        let html = `<h6>${q.question}</h6>`;
+        q.options.forEach((opt, i) => {
+            html += `<div class="form-check custom-checkbox mb-2">
+                        <input class="form-check-input" type="radio" name="quizOpt" id="qopt${i}" value="${i}">
+                        <label class="form-check-label" for="qopt${i}">${opt}</label>
+                     </div>`;
+        });
+        html += `<button class="btn btn-primary w-100 mt-3" onclick="checkAnswer(${idx}, ${q.answer})">Submit Answer</button>`;
+
+        document.getElementById('quizBody').innerHTML = html;
+        const bsModal = new bootstrap.Modal(document.getElementById('quizModal'));
+        bsModal.show();
+    }
+
+    function checkAnswer(topicIdx, correctIdx) {
+        const selected = document.querySelector('input[name="quizOpt"]:checked');
+        if (!selected) return;
+
+        if (parseInt(selected.value) === correctIdx) {
+            alert("Correct! 🎉");
+            markComplete(topicIdx); // Auto-complete lesson on quiz pass
+            bootstrap.Modal.getInstance(document.getElementById('quizModal')).hide();
+        } else {
+            alert("Incorrect. Try again.");
+        }
+    }
+
+    // --- Maturity Score & Charts ---
+    function updateMaturityScore() {
+        // Simple Algo: 
+        // Lesson % (50 points)
+        // Checklist % (30 points)
+        // Risk Score (20 points - based on cached value or default 0)
+
+        const lessonScore = (completedLessons.length / TOPICS_DATA.length) * 50;
+
+        const checkChecks = document.querySelectorAll('.security-check:checked').length;
+        const totalChecks = document.querySelectorAll('.security-check').length || 10;
+        const checklistScore = (checkChecks / totalChecks) * 30;
+
+        // Simple Risk logic placeholder
+        const riskScore = 10; // Default middle ground
+
+        const total = Math.round(lessonScore + checklistScore + riskScore);
+
+        const disp = document.getElementById('maturityScoreDisplay');
+        if (disp) disp.innerText = total;
+
+        const levelSpan = document.getElementById('maturityLevel');
+        if (total < 30) levelSpan.innerText = "Novice";
+        else if (total < 70) levelSpan.innerText = "Apprentice";
+        else levelSpan.innerText = "Cyber Sentinel";
+
+        // Update Chart
+        if (window.myChart) {
+            window.myChart.data.datasets[0].data = [lessonScore, checklistScore, riskScore];
+            window.myChart.update();
+        }
+    }
+
+    function initChart() {
+        const ctx = document.getElementById('skillsChart');
+        if (!ctx) return;
+
+        window.myChart = new Chart(ctx, {
+            type: 'radar',
+            data: {
+                labels: ['Knowledge (Lessons)', 'Prevention (Checklist)', 'Behavior (Risk)'],
+                datasets: [{
+                    label: 'Security Profile',
+                    data: [0, 0, 0],
+                    backgroundColor: 'rgba(0, 210, 255, 0.2)',
+                    borderColor: '#00d2ff',
+                    pointBackgroundColor: '#fff',
+                    pointBorderColor: '#fff'
+                }]
+            },
+            options: {
+                scales: {
+                    r: {
+                        angleLines: { color: 'rgba(255,255,255,0.1)' },
+                        grid: { color: 'rgba(255,255,255,0.1)' },
+                        pointLabels: { color: '#a0a0a0' },
+                        suggestedMin: 0,
+                        suggestedMax: 50
+                    }
+                },
+                plugins: {
+                    legend: { display: false }
+                }
+            }
+        });
+    }
+
+    // --- Existing Utility Functions (Checklist, Glossary, Risk) ---
+    // (Preserve existing functions here - shortened for file limit, assume previous logic is mostly same but adapted)
+
+    function updateProgress() {
+        const checks = document.querySelectorAll('.security-check');
+        let checkedCount = 0;
+
+        checks.forEach((check, index) => {
+            if (check.checked) {
+                checkedCount++;
+                localStorage.setItem('secCheck_' + index, 'true');
+            } else {
+                localStorage.removeItem('secCheck_' + index);
+            }
+        });
+
+        const percent = Math.round((checkedCount / checks.length) * 100);
+        const pBar = document.getElementById('securityProgress');
+        const pText = document.getElementById('progressText');
+        if (pBar) pBar.style.width = percent + '%';
+        if (pText) pText.innerText = percent + '%';
+
+        updateMaturityScore(); // Recalculate maturity on check
+    }
+
+    function loadChecklist() {
+        const checks = document.querySelectorAll('.security-check');
+        checks.forEach((check, index) => {
+            if (localStorage.getItem('secCheck_' + index) === 'true') {
+                check.checked = true;
+            }
+        });
+        updateProgress();
+    }
+
+    function resetChecklist() {
+        const checks = document.querySelectorAll('.security-check');
+        const confirmed = confirm("Are you sure you want to clear your progress?");
+        if (confirmed) {
+            checks.forEach((check, index) => {
+                check.checked = false;
+                localStorage.removeItem('secCheck_' + index);
+            });
+            updateProgress();
+        }
+    }
+
+    function calculateRisk() {
+        const q1 = parseInt(document.getElementById('q1').value) || 0;
+        const q2 = parseInt(document.getElementById('q2').value) || 0;
+        const q3 = parseInt(document.getElementById('q3').value) || 0;
+
+        const totalRisk = q1 + q2 + q3;
+        const resultDiv = document.getElementById('riskResult');
+        const quizDiv = document.getElementById('riskQuiz');
+        const scoreVal = document.getElementById('riskScoreVal');
+        const msg = document.getElementById('riskMessage');
+
+        quizDiv.classList.add('d-none');
+        resultDiv.classList.remove('d-none');
+
+        let riskPoints = 20; // Default
+
+        if (totalRisk <= 5) {
+            scoreVal.innerText = "LOW";
+            scoreVal.className = "display-1 fw-bold my-4 text-success";
+            msg.innerText = "Great job! You have strong security habits.";
+            riskPoints = 20;
+        } else if (totalRisk <= 15) {
+            scoreVal.innerText = "MODERATE";
+            scoreVal.className = "display-1 fw-bold my-4 text-warning";
+            msg.innerText = "Room for improvement.";
+            riskPoints = 10;
+        } else {
+            scoreVal.innerText = "HIGH";
+            scoreVal.className = "display-1 fw-bold my-4 text-danger";
+            msg.innerText = "Warning! Vulnerable.";
+            riskPoints = 0;
+        }
+    }
+
+    function resetRisk() {
+        document.getElementById('riskResult').classList.add('d-none');
+        document.getElementById('riskQuiz').classList.remove('d-none');
+    }
+
+    function filterGlossary() {
+        const input = document.getElementById('glossarySearch').value.toUpperCase();
+        const items = document.querySelectorAll('.glossary-item');
+        items.forEach(item => {
+            const term = item.querySelector('.term-title').innerText.toUpperCase();
+            item.style.display = term.includes(input) ? "" : "none";
+        });
+    }
+
+</script>
+
 <style>
-    .awareness-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
-        gap: 2rem;
-    }
-
-    .awareness-card {
-        padding: 2rem;
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-    }
-
-    .awareness-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(157, 80, 187, 0.2);
-        /* Purple Glow */
-        border-color: var(--secondary-accent);
-    }
-
-    .icon-header {
-        font-size: 3rem;
-        margin-bottom: 1rem;
-    }
-
-    .tips-list {
-        list-style: none;
-        padding: 0;
-        margin-top: 1.5rem;
-        text-align: left;
-    }
-
-    .tips-list li {
-        margin-bottom: 0.8rem;
-        font-size: 0.9rem;
+    /* Styles from previous + new ones */
+    .glass-tab {
         color: var(--text-secondary);
-        display: flex;
-        align-items: flex-start;
-        gap: 0.5rem;
+        background: rgba(255, 255, 255, 0.05);
+        border: 1px solid rgba(255, 255, 255, 0.1);
+        margin: 0 5px;
+        border-radius: 20px;
+        cursor: pointer;
+    }
+
+    .glass-tab.active {
+        background: var(--primary-accent) !important;
+        color: #fff !important;
+        box-shadow: 0 0 15px rgba(0, 243, 255, 0.3);
+    }
+
+    .badge-item {
+        transition: all 0.3s;
+    }
+
+    .lesson-card {
+        transition: transform 0.2s;
+    }
+
+    .lesson-card:hover {
+        transform: translateY(-5px);
+    }
+
+    .custom-checkbox .form-check-input {
+        background-color: transparent;
+        border-color: var(--text-secondary);
+        cursor: pointer;
+    }
+
+    .custom-checkbox .form-check-input:checked {
+        background-color: var(--success);
+        border-color: var(--success);
     }
 </style>
 {% endblock %}

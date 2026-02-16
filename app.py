@@ -76,12 +76,14 @@ def academy():
 @app.route('/academy/learning')
 @login_required
 def academy_learning():
-    return render_template('academy/learning_paths.html')
+    from utils.academy_content import LEARNING_PATHS
+    return render_template('academy/learning_paths.html', paths=LEARNING_PATHS)
 
 @app.route('/academy/careers')
 @login_required
 def academy_careers():
-    return render_template('academy/career_guide.html')
+    from utils.academy_content import CAREER_ROLES
+    return render_template('academy/career_guide.html', roles=CAREER_ROLES)
 
 @app.route('/logout')
 @login_required
@@ -149,19 +151,40 @@ def detect_video():
 def tools():
     return render_template('tools.html')
 
-from utils.password_utils import generate_personalized_password
+from utils.password_utils import generate_personalized_password, generate_random_password, generate_passphrase
 
 @app.route('/tools/password-generator', methods=['GET', 'POST'])
 @login_required
 def password_generator():
     if request.method == 'POST':
         data = request.get_json()
-        name = data.get('name', '')
-        year = data.get('year', '')
-        keyword = data.get('keyword', '')
+        gen_type = data.get('type', 'personalized')
         
-        password = generate_personalized_password(name, year, keyword)
-        return jsonify({'password': password})
+        password = ""
+        
+        if gen_type == 'personalized':
+            name = data.get('name', '')
+            year = data.get('year', '')
+            keyword = data.get('keyword', '')
+            password = generate_personalized_password(name, year, keyword)
+            
+        elif gen_type == 'random':
+            length = int(data.get('length', 16))
+            use_upper = data.get('use_upper', True)
+            use_digits = data.get('use_digits', True)
+            use_symbols = data.get('use_symbols', True)
+            password = generate_random_password(length, use_upper, use_digits, use_symbols)
+            
+        elif gen_type == 'passphrase':
+            num_words = int(data.get('num_words', 4))
+            separator = data.get('separator', '-')
+            capitalize = data.get('capitalize', True)
+            password = generate_passphrase(num_words, separator, capitalize)
+            
+        # Check strength of generated password
+        strength = check_password_strength(password)
+            
+        return jsonify({'password': password, 'strength': strength})
         
     return render_template('tools/password_generator.html')
 
@@ -222,9 +245,23 @@ def chat():
     bot_response = get_bot_response(user_msg)
     return jsonify({'response': bot_response})
 
+from utils.awareness_content import AWARENESS_TOPICS, CASE_STUDIES, GLOSSARY, DAILY_TIPS, CHECKLIST_ITEMS, MYTHS_FACTS, BADGES
+import random
+
 @app.route('/awareness')
+@login_required
 def awareness():
-    return render_template('awareness.html')
+    # Pick a random daily tip
+    daily_tip = random.choice(DAILY_TIPS)
+    
+    return render_template('awareness.html', 
+                         topics=AWARENESS_TOPICS,
+                         cases=CASE_STUDIES,
+                         glossary=GLOSSARY,
+                         daily_tip=daily_tip,
+                         checklist=CHECKLIST_ITEMS,
+                         myths=MYTHS_FACTS,
+                         badges=BADGES)
 
 # Create DB Tables
 if __name__ == '__main__':

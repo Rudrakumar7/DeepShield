@@ -9,25 +9,40 @@ def inspect_file(filepath):
     try:
         if filepath.endswith('.csv'):
             try:
+                # Try default encoding
                 df = pd.read_csv(filepath, nrows=5)
-            except Exception:
-                # Try with different encoding if default fails
-                 df = pd.read_csv(filepath, nrows=5, encoding='latin1')
+            except UnicodeDecodeError:
+                print("  -> UnicodeDecodeError with utf-8, trying latin1")
+                df = pd.read_csv(filepath, nrows=5, encoding='latin1')
+            except pd.errors.ParserError:
+                 print("  -> ParserError, trying with error_bad_lines=False")
+                 df = pd.read_csv(filepath, nrows=5, on_bad_lines='skip')
+
         elif filepath.endswith('.xlsx') or filepath.endswith('.xls'):
-            df = pd.read_excel(filepath, nrows=5)
+            try:
+                df = pd.read_excel(filepath, nrows=5)
+            except ImportError as e:
+                print(f"  -> Skipping Excel file due to missing dependency: {e}")
+                return
         else:
             print("Skipping non-dataset file.")
             return
 
-        if df.empty:
-            print("DataFrame is empty.")
+        if df is None or df.empty:
+            print("  -> DataFrame is empty or None.")
         else:
-            print("Columns:", list(df.columns))
-            print("First 2 rows:")
+            print("  -> Columns:", list(df.columns))
+            print("  -> First 2 rows:")
             print(df.head(2))
+            
+            # Check for label distribution if label column exists
+            possible_labels = [c for c in df.columns if 'label' in c.lower() or 'type' in c.lower()]
+            if possible_labels:
+                print(f"  -> Possible label columns: {possible_labels}")
+
     except Exception as e:
         print(f"Error reading {filepath}: {e}")
-        traceback.print_exc()
+        # traceback.print_exc()
     print("--- End Inspection ---\n")
 
 if os.path.exists(dataset_dir):
