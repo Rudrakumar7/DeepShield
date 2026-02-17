@@ -223,6 +223,16 @@ def password_strength():
 def phishing_simulation():
     return render_template('tools/phishing_simulation.html')
 
+from utils.phishing_simulation_data import get_random_scenarios
+
+@app.route('/api/simulation/scenarios')
+@login_required
+def get_simulation_scenarios():
+    count = request.args.get('count', default=5, type=int)
+    difficulty = request.args.get('difficulty', default=None, type=str)
+    scenarios = get_random_scenarios(count, difficulty)
+    return jsonify(scenarios)
+
 
 
 from utils.news import get_cyber_news, get_mock_news

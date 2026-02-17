@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 try:
     from utils.awareness_content import AWARENESS_TOPICS, CASE_STUDIES, GLOSSARY, DAILY_TIPS, CHECKLIST_ITEMS, MYTHS_FACTS
     print("Import Successful!")

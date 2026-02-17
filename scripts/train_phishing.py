@@ -3,6 +3,11 @@ import requests
 import pandas as pd
 import io
 import numpy as np
+import sys
+
+# Add parent directory to sys.path
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 from utils.phishing_model import PhishingClassifier
 
 def fetch_hf_dataset():
@@ -33,7 +38,7 @@ def load_local_datasets():
     Loads any CSV files found in 'datasets/' folder.
     Expects columns like 'url' and 'type'/'label'.
     """
-    dataset_dir = 'datasets'
+    dataset_dir = os.path.join(os.path.dirname(__file__), '..', 'datasets')
     if not os.path.exists(dataset_dir):
         os.makedirs(dataset_dir)
         print(f"Created '{dataset_dir}' folder. Drop your CSVs here (LegitPhish, PhiUSIIL, etc.)!")

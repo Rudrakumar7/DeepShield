@@ -1,3 +1,7 @@
+import sys
+import os
+sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), '..')))
+
 import unittest
 from utils.news import get_cyber_news, clean_html, analyze_article, _news_cache
 import time

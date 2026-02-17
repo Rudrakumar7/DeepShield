@@ -1,197 +1,275 @@
 {% extends 'base.html' %}
 
 {% block content %}
-<div class="container fade-in">
-    <!-- Intro Screen -->
-    <div id="intro-screen" class="text-center p-4 glass" style="max-width: 800px; margin: 2rem auto;">
-        <div style="font-size: 4rem;" class="mb-3 bounce-in">🎓</div>
-        <h1 class="mb-2 display-4 font-weight-bold">Phishing Hunter Academy</h1>
-        <p class="text-secondary mb-4" style="font-size: 1.1rem;">Before you start, review these 4 signs of a phishing
-            attack.</p>
+<div class="container-fluid p-0 fade-in h-100 d-flex flex-column" style="height: calc(100vh - 70px) !important;">
 
-        <div class="row text-left mb-5">
-            <div class="col-md-6 mb-3">
-                <div class="p-3 border border-secondary rounded h-100" style="background: rgba(255,255,255,0.05);">
-                    <h5 class="text-info">1. 📧 Check the Sender</h5>
-                    <p class="small text-secondary mb-0">Look for typos (e.g., <code>paypa1.com</code>) or random Gmail
-                        addresses for official business.</p>
+    <!-- Gamified HUD -->
+    <div class="d-flex justify-content-between align-items-center px-4 py-3 bg-dark border-bottom border-secondary"
+        style="box-shadow: 0 4px 6px rgba(0,0,0,0.3); z-index: 10;">
+        <div class="d-flex align-items-center">
+            <div class="mr-4">
+                <small class="text-uppercase text-secondary font-weight-bold"
+                    style="letter-spacing: 1px;">Health</small>
+                <div id="health-bar" style="font-size: 1.5rem;">
+                    ❤️❤️❤️
                 </div>
             </div>
-            <div class="col-md-6 mb-3">
-                <div class="p-3 border border-secondary rounded h-100" style="background: rgba(255,255,255,0.05);">
-                    <h5 class="text-danger">2. ⏰ Sense of Urgency</h5>
-                    <p class="small text-secondary mb-0">Hackers want you to panic. Watch for "Immediate Action
-                        Required" or "Account Suspended".</p>
-                </div>
-            </div>
-            <div class="col-md-6 mb-3">
-                <div class="p-3 border border-secondary rounded h-100" style="background: rgba(255,255,255,0.05);">
-                    <h5 class="text-warning">3. 🔗 Suspicious Links</h5>
-                    <p class="small text-secondary mb-0">Hover over links (don't click!). Does the URL match the company
-                        name?</p>
-                </div>
-            </div>
-            <div class="col-md-6 mb-3">
-                <div class="p-3 border border-secondary rounded h-100" style="background: rgba(255,255,255,0.05);">
-                    <h5 class="text-success">4. 👋 Generic Greetings</h5>
-                    <p class="small text-secondary mb-0">Legitimate companies use your name. Beware of "Dear Customer"
-                        or "Dear User".</p>
+            <div class="mr-4">
+                <small class="text-uppercase text-secondary font-weight-bold" style="letter-spacing: 1px;">Level</small>
+                <div class="d-flex align-items-center">
+                    <span class="badge badge-warning mr-2" id="level-badge" style="font-size: 1rem;">Lvl 1</span>
+                    <div class="progress" style="width: 100px; height: 6px; background: rgba(255,255,255,0.1);">
+                        <div class="progress-bar bg-warning" id="xp-bar" style="width: 0%"></div>
+                    </div>
                 </div>
             </div>
         </div>
 
-        <button class="btn btn-primary btn-lg px-5 py-3 shadow-lg scale-on-hover" onclick="startGame()">
-            I'm Ready! Start Simulation 🚀
-        </button>
+        <div class="text-center">
+            <h4 class="mb-0 font-weight-bold text-gradient">Phishing Defense</h4>
+            <small class="text-secondary">Wave <span id="current-wave">1</span> (Difficulty: Easy)</small>
+        </div>
+
+        <div class="d-flex align-items-center">
+            <div class="mr-4 text-right">
+                <small class="text-uppercase text-secondary font-weight-bold">Score</small>
+                <div class="font-weight-bold text-white" style="font-size: 1.4rem;" id="score-val">0</div>
+            </div>
+            <div class="mr-3 text-right">
+                <small class="text-uppercase text-secondary font-weight-bold">Combo</small>
+                <div class="font-weight-bold text-warning" style="font-size: 1.4rem;">x<span id="combo-val">0</span>
+                </div>
+            </div>
+            <button class="btn btn-outline-light btn-sm ml-3" onclick="location.reload()">
+                <i class="fas fa-redo"></i>
+            </button>
+        </div>
     </div>
 
-    <!-- Game Container (Hidden Initially) -->
-    <div id="game-container" style="display: none;">
-        <div class="text-center mb-4">
-            <h2 class="mb-2">🎣 Phishing Simulation Trainer</h2>
+    <!-- Main Game Area -->
+    <div class="d-flex flex-grow-1 overflow-hidden position-relative">
+
+        <!-- Power-ups Sidebar -->
+        <div class="d-none d-md-flex flex-column bg-dark border-right border-secondary p-3 align-items-center"
+            style="width: 80px;">
+            <small class="text-center text-secondary mb-3" style="font-size: 0.7rem;">POWER UPS</small>
+
+            <button
+                class="btn btn-dark border border-secondary p-2 mb-3 rounded-circle shadow scale-on-hover position-relative"
+                onclick="usePowerUp('xray')" data-toggle="tooltip" title="X-Ray (Reveal Links) - Cost: 50pts">
+                <span style="font-size: 1.5rem;">🔍</span>
+                <span class="badge badge-pill badge-primary position-absolute"
+                    style="bottom: -5px; right: -5px;">50</span>
+            </button>
+
+            <button
+                class="btn btn-dark border border-secondary p-2 mb-3 rounded-circle shadow scale-on-hover position-relative"
+                onclick="usePowerUp('hint')" data-toggle="tooltip" title="AI Hint - Cost: 30pts">
+                <span style="font-size: 1.5rem;">🤖</span>
+                <span class="badge badge-pill badge-primary position-absolute"
+                    style="bottom: -5px; right: -5px;">30</span>
+            </button>
         </div>
 
-        <!-- Gamification Header -->
-        <div class="d-flex justify-content-between align-items-center mb-4 gamification-bar glass p-3">
-            <div class="d-flex align-items-center" style="min-width: 120px;">
-                <span class="mr-3 icon-pulse" style="font-size: 1.8rem;">🔥</span>
-                <div>
-                    <strong id="streak-display" style="font-size: 1.2rem;">0</strong>
-                    <div class="text-secondary" style="font-size: 0.8rem;">Streak</div>
-                </div>
+        <!-- Email View (Outlook Style) -->
+        <div class="col p-0 d-flex flex-column bg-dark position-relative" id="reading-pane">
+
+            <!-- Loading State -->
+            <div id="loading-state" class="h-100 d-flex justify-content-center align-items-center">
+                <div class="spinner-border text-primary" role="status"></div>
             </div>
 
-            <!-- Timer Bar -->
-            <div class="flex-grow-1 mx-4 position-relative">
-                <div class="d-flex justify-content-between mb-1">
-                    <small class="text-secondary">Time Remaining</small>
-                    <small id="timer-text" class="text-warning">30s</small>
-                </div>
-                <div class="progress" style="height: 10px; background: rgba(255,255,255,0.05); border-radius: 10px;">
-                    <div id="timer-bar" class="progress-bar bg-warning"
-                        style="width: 100%; border-radius: 10px; transition: width 1s linear;"></div>
-                </div>
+            <!-- Empty State -->
+            <div id="game-over-state"
+                class="d-none h-100 flex-column justify-content-center align-items-center text-center p-5">
+                <div style="font-size: 5rem;" class="mb-3">💀</div>
+                <h1 class="text-danger mb-3">System Compromised!</h1>
+                <p class="lead text-secondary mb-4">You ran out of health. The attackers got through.</p>
+                <h3 class="mb-4">Final Score: <span id="final-score" class="text-white">0</span></h3>
+                <button class="btn btn-primary btn-lg px-5 shadow-lg scale-on-hover" onclick="location.reload()">Try
+                    Again</button>
             </div>
 
-            <div class="d-flex align-items-center text-right" style="min-width: 120px; justify-content: flex-end;">
-                <div class="mr-3">
-                    <strong id="score-display" style="font-size: 1.2rem;">0</strong>
-                    <div class="text-secondary" style="font-size: 0.8rem;">Score</div>
-                </div>
-                <span style="font-size: 1.8rem;">🏆</span>
-            </div>
-        </div>
-
-        <div class="simulation-container glass p-0 overflow-hidden shadow-lg">
-            <!-- Pseudo Browser Header -->
-            <div class="browser-header px-4 py-2 d-flex align-items-center"
-                style="background: rgba(0,0,0,0.3); border-bottom: 1px solid rgba(255,255,255,0.05);">
-                <div class="dots d-flex mr-3">
-                    <span class="dot bg-danger rounded-circle" style="width:10px; height:10px;"></span>
-                    <span class="dot bg-warning rounded-circle mx-2" style="width:10px; height:10px;"></span>
-                    <span class="dot bg-success rounded-circle" style="width:10px; height:10px;"></span>
-                </div>
-                <div class="url-bar flex-grow-1 text-center text-secondary font-monospace"
-                    style="font-size: 0.8rem; background: rgba(0,0,0,0.2); border-radius: 4px; padding: 4px;">
-                    <span style="color: var(--success);">🔒</span> Secure Email Client
-                </div>
+            <div id="victory-state"
+                class="d-none h-100 flex-column justify-content-center align-items-center text-center p-5">
+                <div style="font-size: 5rem;" class="mb-3">🏆</div>
+                <h1 class="text-warning mb-3">Cyber Guardian!</h1>
+                <p class="lead text-secondary mb-4">You successfully defended against all waves.</p>
+                <h3 class="mb-4">Final Score: <span id="victory-score" class="text-white">0</span></h3>
+                <button class="btn btn-primary btn-lg px-5 shadow-lg scale-on-hover" onclick="location.reload()">Play
+                    Again</button>
             </div>
 
-            <!-- Scenario Card -->
-            <div id="scenario-card" class="p-4 p-md-5">
+            <!-- Email Content -->
+            <div id="email-content" class="d-none flex-column h-100 fade-in">
+                <!-- Toolbar -->
+                <div
+                    class="d-flex justify-content-between align-items-center px-4 py-3 border-bottom border-secondary bg-dark-lighter">
+                    <div class="font-weight-bold text-white">
+                        <i class="fas fa-shield-alt mr-2 text-primary"></i> Incoming Message...
+                    </div>
+                    <div>
+                        <button class="btn btn-danger btn-lg mr-3 shadow-lg scale-on-hover font-weight-bold px-4"
+                            onclick="handleDecision('report')">
+                            <i class="fas fa-bug mr-2"></i> REPORT PHISHING
+                        </button>
+                        <button class="btn btn-success btn-lg shadow-lg scale-on-hover font-weight-bold px-4"
+                            onclick="handleDecision('archive')">
+                            <i class="fas fa-check-circle mr-2"></i> LEGITIMATE
+                        </button>
+                    </div>
+                </div>
 
-                <div class="email-mockup mb-5 slide-in-bottom">
-                    <div class="email-header p-3 mb-3" style="border-bottom: 1px solid rgba(255,255,255,0.1);">
-                        <div class="d-flex justify-content-between align-items-start">
-                            <div>
-                                <h4 id="email-subject" class="mb-2 text-white">Subject</h4>
-                                <p class="mb-1 text-secondary">From: <span id="email-from"
-                                        class="text-white font-weight-bold">sender</span></p>
-                                <p class="mb-0 text-secondary" style="font-size: 0.85rem;">To: <span
-                                        class="text-light">me@deepshield.com</span></p>
-                            </div>
-                            <!-- Initial Avatar -->
-                            <div class="email-avatar d-flex align-items-center justify-content-center font-weight-bold text-white shadow-sm"
-                                id="sender-avatar"
-                                style="width: 50px; height: 50px; border-radius: 50%; background: var(--primary-gradient);">
-                                ?
+                <!-- Email Header -->
+                <div class="px-4 py-3 border-bottom border-secondary bg-dark">
+                    <div class="d-flex justify-content-between">
+                        <h3 class="mb-1 text-white" id="msg-subject">Subject Line</h3>
+                        <span class="text-secondary small">Today, 10:30 AM</span>
+                    </div>
+                    <div class="d-flex align-items-center mt-3">
+                        <div class="rounded-circle bg-gradient d-flex align-items-center justify-content-center text-white font-weight-bold mr-3 shadow"
+                            style="width: 50px; height: 50px; font-size: 1.2rem;" id="msg-avatar">
+                            A
+                        </div>
+                        <div>
+                            <div class="font-weight-bold text-white" style="font-size: 1.1rem;" id="msg-sender-name">
+                                Sender Name</div>
+                            <div class="text-secondary small font-monospace" id="msg-sender-email">sender@example.com
                             </div>
                         </div>
                     </div>
-                    <div class="email-body p-2" id="email-body"
-                        style="min-height: 150px; font-size: 1.05rem; line-height: 1.6;">
-                        <!-- Body Content -->
+                </div>
+
+                <!-- Email Body -->
+                <div class="p-5 flex-grow-1 overflow-auto custom-scrollbar"
+                    style="background: #1a1a1a; font-size: 1.1rem;">
+                    <div id="msg-body" class="email-body-content">
+                        <!-- Dynamic Content -->
                     </div>
                 </div>
 
-                <div class="actions text-center">
-                    <p class="text-secondary mb-4">Is this email safe or simulated phishing?</p>
-                    <button class="btn btn-lg btn-outline-success mx-2 px-5 py-3 action-btn scale-on-hover"
-                        onclick="checkAnswer('safe')">
-                        <span class="mr-2">✅</span> Safe
+                <!-- AI Hint Box -->
+                <div id="ai-hint-box"
+                    class="px-4 py-3 bg-dark-lighter border-top border-secondary text-info d-none bounce-in">
+                    <i class="fas fa-robot mr-2"></i> <strong>AI Insight:</strong> <span id="ai-hint-text">...</span>
+                </div>
+
+                <!-- Fake Status Bar -->
+                <div id="link-preview"
+                    class="px-3 py-2 bg-black border-top border-secondary text-truncate font-monospace text-warning d-none"
+                    style="font-size: 0.9rem;">
+                    URL Preview: <span id="link-url">...</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<!-- Quiz Modal -->
+<div class="modal fade" id="quizModal" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered" role="document">
+        <div class="modal-content bg-dark border border-secondary shadow-lg">
+            <div class="modal-header border-bottom border-secondary">
+                <h5 class="modal-title font-weight-bold"><i class="fas fa-question-circle text-warning mr-2"></i>Why is
+                    this Phishing?</h5>
+            </div>
+            <div class="modal-body">
+                <p class="text-secondary mb-4">Select the primary indicator that makes this email suspicious:</p>
+                <div class="list-group">
+                    <button type="button"
+                        class="list-group-item list-group-item-action bg-dark-light text-light border-secondary mb-2 rounded"
+                        onclick="submitQuiz('sender')">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-user-secret mr-3 text-danger" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <h6 class="mb-0 font-weight-bold">Suspicious Sender</h6>
+                                <small class="text-muted">Mismatched domain, unusual address.</small>
+                            </div>
+                        </div>
                     </button>
-                    <button class="btn btn-lg btn-outline-danger mx-2 px-5 py-3 action-btn scale-on-hover"
-                        onclick="checkAnswer('phishing')">
-                        <span class="mr-2">🚨</span> Phishing
+                    <button type="button"
+                        class="list-group-item list-group-item-action bg-dark-light text-light border-secondary mb-2 rounded"
+                        onclick="submitQuiz('link')">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-link mr-3 text-info" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <h6 class="mb-0 font-weight-bold">Dangerous Link</h6>
+                                <small class="text-muted">Fake URL, URL shortener, http://.</small>
+                            </div>
+                        </div>
+                    </button>
+                    <button type="button"
+                        class="list-group-item list-group-item-action bg-dark-light text-light border-secondary mb-2 rounded"
+                        onclick="submitQuiz('content')">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-exclamation-triangle mr-3 text-warning" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <h6 class="mb-0 font-weight-bold">Urgency / Threats</h6>
+                                <small class="text-muted">"Act now", "Account suspended", "Gift cards".</small>
+                            </div>
+                        </div>
+                    </button>
+                    <button type="button"
+                        class="list-group-item list-group-item-action bg-dark-light text-light border-secondary mb-2 rounded"
+                        onclick="submitQuiz('file')">
+                        <div class="d-flex align-items-center">
+                            <i class="fas fa-file-download mr-3 text-success" style="font-size: 1.5rem;"></i>
+                            <div>
+                                <h6 class="mb-0 font-weight-bold">Unexpected Attachment</h6>
+                                <small class="text-muted">Invoice, Resume, unexpected file.</small>
+                            </div>
+                        </div>
                     </button>
                 </div>
             </div>
+        </div>
+    </div>
+</div>
 
-            <!-- Result Card -->
-            <!-- Result Card -->
-            <div id="result-card"
-                class="p-4 p-md-5 text-center fade-in h-100 flex-column justify-content-center align-items-center"
-                style="display: none; min-height: 400px;">
+<!-- Level Up Modal -->
+<div class="modal fade" id="feedbackModal" tabindex="-1" role="dialog" data-backdrop="static">
+    <div class="modal-dialog modal-dialog-centered modal-lg" role="document">
+        <div class="modal-content bg-dark border border-secondary shadow-lg">
+            <div class="modal-body p-0">
+                <div class="d-flex">
+                    <!-- Status Bar -->
+                    <div id="feedback-color-bar" class="bg-success rounded-left" style="width: 15px;"></div>
 
-                <!-- Icon & Title -->
-                <div class="mb-4">
-                    <div id="feedback-icon" class="mb-3 bounce-in" style="font-size: 5rem; line-height: 1;"></div>
-                    <h2 id="feedback-title" class="font-weight-bold display-5"></h2>
-                </div>
+                    <div class="p-4 flex-grow-1">
+                        <div class="d-flex justify-content-between align-items-start mb-3">
+                            <div>
+                                <h1 class="font-weight-bold mb-0 display-4" id="modal-verdict">Correct!</h1>
+                                <div class="d-flex align-items-center mt-2">
+                                    <span class="badge badge-pill badge-warning mr-2" id="modal-xp">+50 XP</span>
+                                    <span class="text-secondary" id="modal-streak">Streak x2</span>
+                                </div>
+                            </div>
+                            <div id="modal-icon" class="display-3 bounce-in">🎉</div>
+                        </div>
 
-                <!-- Analysis Box -->
-                <div class="glass p-4 mb-4 text-left mx-auto w-100 shadow-sm"
-                    style="max-width: 650px; border-left: 6px solid var(--primary); border-radius: 8px; background: rgba(255,255,255,0.03);">
-                    <div class="d-flex align-items-center mb-3">
-                        <span style="font-size: 1.5rem;" class="mr-2">🔍</span>
-                        <h5 class="text-white mb-0 font-weight-bold">Security Analysis</h5>
+                        <div class="card bg-dark-light border-secondary mb-4">
+                            <div class="card-body p-3">
+                                <div class="d-flex">
+                                    <div class="mr-3" style="font-size: 2rem;">💡</div>
+                                    <div>
+                                        <h5 class="text-white font-weight-bold mb-1">Did You Know?</h5>
+                                        <p id="modal-tip" class="mb-0 text-light"
+                                            style="font-size: 1.1rem; opacity: 0.9;">...</p>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+
+                        <h6 class="text-secondary font-weight-bold text-uppercase small mb-2">Analysis</h6>
+                        <p id="modal-reason" class="text-light mb-3">...</p>
+
+                        <div class="text-right">
+                            <button class="btn btn-primary btn-lg px-5 shadow rounded-pill scale-on-hover"
+                                onclick="nextScenario()">
+                                Next Scenario <i class="fas fa-arrow-right ml-2"></i>
+                            </button>
+                        </div>
                     </div>
-                    <p id="feedback-desc" class="mb-0 text-light"
-                        style="font-size: 1.1rem; line-height: 1.6; opacity: 0.9;"></p>
-                </div>
-
-                <!-- Action Button -->
-                <div class="mt-2">
-                    <button
-                        class="btn btn-primary btn-lg px-5 py-3 shadow-lg scale-on-hover font-weight-bold rounded-pill"
-                        onclick="nextScenario()">
-                        Next Scenario <span class="ml-2">→</span>
-                    </button>
-                </div>
-            </div>
-
-            <!-- Final Score Card -->
-            <div id="final-card" class="p-5 text-center fade-in" style="display: none;">
-                <div style="font-size: 6rem;" class="mb-4 bounce-in">🎉</div>
-                <h2 class="mb-3 display-4">Training Complete!</h2>
-                <p class="text-secondary mb-5 font-size-lg">You've successfully analyzed all scenarios.</p>
-
-                <div class="row mb-5 justify-content-center">
-                    <div class="col-md-4 col-6 text-center border-right border-secondary">
-                        <h3 class="display-4 font-weight-bold text-gradient"><span id="final-score-value">0</span></h3>
-                        <small class="text-uppercase tracking-widest text-secondary">Correct Answers</small>
-                    </div>
-                    <div class="col-md-4 col-6 text-center">
-                        <h3 class="display-4 font-weight-bold text-warning"><span id="final-streak-value">0</span></h3>
-                        <small class="text-uppercase tracking-widest text-secondary">Best Streak</small>
-                    </div>
-                </div>
-
-                <div class="d-flex justify-content-center gap-3">
-                    <button class="btn btn-outline-primary px-4 mx-2 scale-on-hover" onclick="location.reload()">Replay
-                        Training</button>
-                    <a href="{{ url_for('tools') }}" class="btn btn-secondary px-4 mx-2 scale-on-hover">Back to
-                        Tools</a>
                 </div>
             </div>
         </div>
@@ -199,21 +277,12 @@
 </div>
 
 <style>
-    .simulation-container {
-        max-width: 800px;
-        margin: 2rem auto;
-        height: auto;
+    .bg-dark-light {
+        background-color: #1e1e1e;
     }
 
-    .action-btn {
-        transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
-        border-width: 2px;
-        border-radius: 50px;
-    }
-
-    .scale-on-hover:hover {
-        transform: scale(1.05);
-        box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+    .bg-dark-lighter {
+        background-color: #252525;
     }
 
     .text-gradient {
@@ -223,25 +292,31 @@
         -webkit-text-fill-color: transparent;
     }
 
-    .icon-pulse {
-        animation: pulse-animation 2s infinite;
+    .scale-on-hover:hover {
+        transform: scale(1.05);
     }
 
-    @keyframes pulse-animation {
-        0% {
-            transform: scale(1);
-            opacity: 1;
-        }
+    .bg-gradient {
+        background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+    }
 
-        50% {
-            transform: scale(1.2);
-            opacity: 0.8;
-        }
+    .fake-link {
+        color: #3498db;
+        text-decoration: underline;
+        cursor: help;
+        font-weight: 500;
+        padding: 2px 4px;
+        border-radius: 4px;
+        transition: background 0.2s;
+    }
 
-        100% {
-            transform: scale(1);
-            opacity: 1;
-        }
+    .fake-link:hover {
+        background: rgba(52, 152, 219, 0.1);
+    }
+
+    .fake-link.xray-active {
+        background: rgba(231, 76, 60, 0.2);
+        border: 1px dashed #e74c3c;
     }
 
     .bounce-in {
@@ -264,213 +339,259 @@
             opacity: 1;
         }
     }
-
-    .slide-in-bottom {
-        animation: slide-in 0.5s ease-out;
-    }
-
-    @keyframes slide-in {
-        from {
-            transform: translateY(50px);
-            opacity: 0;
-        }
-
-        to {
-            transform: translateY(0);
-            opacity: 1;
-        }
-    }
 </style>
 
 <script>
-    const scenarios = [
-        {
-            from: "billing@netflix-support-team.com",
-            subject: "Alert: Payment Failed",
-            body: `<p>Hi Customer,</p><p>We tried to renew your subscription but the payment failed. Your account will be suspended in 24 hours.</p><p><button class="btn btn-danger btn-sm">Update Payment</button></p><p>Netflix Agent</p>`,
-            type: "phishing",
-            reason: "<strong>Tip:</strong> Look at the sender domain. It says 'netflix-support-team.com' instead of 'netflix.com'. Also, the urgent 24-hour threat is a common tactic."
-        },
-        {
-            from: "admin@deepshield.com",
-            subject: "Scheduled Server Maintenance",
-            body: `<p>Team,</p><p>Servers will be down for maintenance this Saturday from 2 AM to 4 AM. No action is required from your end.</p><p>Best,<br>IT Dept</p>`,
-            type: "safe",
-            reason: "<strong>Correct!</strong> This is a standard informational email from an internal domain. It doesn't ask you to click a link or do anything urgent."
-        },
-        {
-            from: "support@paypa1.com",
-            subject: "Urgent: Account Suspended",
-            body: `<p>Dear Customer,</p><p>We noticed unusual activity on your account. Please click below to verify your identity within 24 hours or your account will be closed.<br><br><span style="color:#00d2ff; text-decoration:underline;">Verify Now</span></p>`,
-            type: "phishing",
-            reason: "<strong>Tip:</strong> 'paypa1.com' uses a number '1' instead of the letter 'l'. This is a classic 'typosquatting' attack."
-        },
-        {
-            from: "ceo-private-email@gmail.com",
-            subject: "Quick Request",
-            body: `<p>Are you at your desk? I need you to buy 5 Google Play gift cards for a prospect. I'm in a meeting and can't call. I'll reimburse you immediately.</p><p>Sent from my iPhone</p>`,
-            type: "phishing",
-            reason: "<strong>Tip:</strong> This is CEO Fraud. Executives won't email you from a random Gmail account asking for gift cards. Always verify such requests offline."
-        },
-        {
-            from: "notifications@slack.com",
-            subject: "New Message from Sarah",
-            body: `<p><strong>Sarah (Design Team)</strong> sent you a message:</p><div style="border-left: 3px solid #ccc; padding-left: 10px; color: #888;">'Hey, can you review the new logo drafts when you get a chance?'</div><p><button class="btn btn-primary btn-sm">View Message</button></p>`,
-            type: "safe",
-            reason: "<strong>Correct!</strong> This mimics a standard Slack notification from their official domain. The request is reasonable and non-urgent."
-        },
-        {
-            from: "hr-payroll@update-files-secure.net",
-            subject: "Action Required: Payroll Details",
-            body: `<p>Dear Employee,</p><p>We are switching payroll providers. Please login to the new portal to confirm your direct deposit details before Friday to get paid.</p><p>Link: <span style="color: blue; text-decoration: underline;">Portal Login</span></p>`,
-            type: "phishing",
-            reason: "<strong>Tip:</strong> HR would annouce a major change like this via official channels, not a random 'update-files-secure.net' link. They are trying to steal your bank login."
-        }
-    ];
-
+    let scenarios = [];
+    let currentScenario = null;
     let currentIdx = 0;
+
+    // Game State
     let score = 0;
-    let streak = 0;
-    let maxStreak = 0;
+    let health = 3;
+    let xp = 0;
+    let combo = 0;
+    let level = 1;
+    let wave = 1; // 1=Easy, 2=Medium, 3=Hard
 
-    // Timer Variables
-    let timeLeft = 30;
-    let timerInterval;
+    let feedbackModal = null;
+    let quizModal = null;
 
-    function startGame() {
-        document.getElementById('intro-screen').style.display = 'none';
-        document.getElementById('game-container').style.display = 'block';
-        loadScenario();
+    const LEVEL_THRESHOLDS = [0, 100, 300, 600, 1000];
+
+    document.addEventListener('DOMContentLoaded', () => {
+        // Initialize Modals
+        feedbackModal = new bootstrap.Modal(document.getElementById('feedbackModal'), { backdrop: 'static', keyboard: false });
+        quizModal = new bootstrap.Modal(document.getElementById('quizModal'), { backdrop: 'static', keyboard: false });
+
+        // Tooltips
+        var tooltipTriggerList = [].slice.call(document.querySelectorAll('[data-toggle="tooltip"]'))
+        var tooltipList = tooltipTriggerList.map(function (tooltipTriggerEl) {
+            return new bootstrap.Tooltip(tooltipTriggerEl)
+        })
+
+        loadWave(1); // Start with Wave 1
+
+        // Link Hover
+        document.getElementById('msg-body').addEventListener('mouseover', (e) => {
+            const link = e.target.closest('.fake-link, .fake-btn');
+            if (link) {
+                const url = link.dataset.url;
+                const preview = document.getElementById('link-preview');
+                document.getElementById('link-url').innerText = url;
+                preview.classList.remove('d-none');
+            }
+        });
+
+        document.getElementById('msg-body').addEventListener('mouseout', () => {
+            const preview = document.getElementById('link-preview');
+            if (preview) preview.classList.add('d-none');
+        });
+
+        document.getElementById('msg-body').addEventListener('click', (e) => { e.preventDefault(); });
+    });
+
+    async function loadWave(waveNum) {
+        let diff = 'Easy';
+        if (waveNum === 2) diff = 'Medium';
+        if (waveNum >= 3) diff = 'Hard';
+
+        wave = waveNum;
+        document.querySelector('.text-center small').innerHTML = `Wave <span id="current-wave">${wave}</span> (Difficulty: ${diff})`;
+
+        try {
+            // Fetch scenarios for this wave/difficulty
+            const res = await fetch(`/api/simulation/scenarios?count=5&difficulty=${diff}`);
+            scenarios = await res.json();
+
+            if (scenarios.length > 0) {
+                document.getElementById('loading-state').classList.add('d-none');
+                currentIdx = 0;
+                startRound();
+            } else {
+                alert("Wave Complete! Starting next wave...");
+                loadWave(wave + 1); // Auto progress if no scenarios (fallback)
+            }
+        } catch (err) {
+            console.error(err);
+            alert("Connection Failed. Please reload.");
+        }
     }
 
-    function loadScenario() {
+    function startRound() {
+        if (health <= 0) return endGame(false);
         if (currentIdx >= scenarios.length) {
-            showFinalScore();
+            // End of Wave
+            if (wave < 3) {
+                alert(`Wave ${wave} Complete! Proceeding to Wave ${wave + 1}...`);
+                loadWave(wave + 1);
+            } else {
+                endGame(true); // Victory
+            }
             return;
         }
 
         const s = scenarios[currentIdx];
+        currentScenario = s;
 
-        // UI Text
-        document.getElementById('email-from').innerText = s.from;
-        document.getElementById('email-subject').innerText = s.subject;
-        document.getElementById('email-body').innerHTML = s.body;
+        // UI Updates
+        document.getElementById('email-content').classList.remove('d-none');
+        document.getElementById('ai-hint-box').classList.add('d-none');
 
-        // Avatar Logic
-        const initial = s.from.charAt(0).toUpperCase();
-        document.getElementById('sender-avatar').innerText = initial;
+        // Content
+        const name = s.sender.split('<')[0].trim();
+        const email = s.sender.includes('<') ? s.sender.split('<')[1].replace('>', '') : s.sender;
 
-        // Transitions
-        document.getElementById('scenario-card').style.display = 'block';
-        document.getElementById('result-card').style.display = 'none';
+        document.getElementById('msg-subject').innerText = s.subject;
+        document.getElementById('msg-sender-name').innerText = name;
+        document.getElementById('msg-sender-email').innerText = email;
+        document.getElementById('msg-avatar').innerText = name.charAt(0);
+        document.getElementById('msg-body').innerHTML = s.body;
 
-        // Reset classes for animation
-        const mockup = document.querySelector('.email-mockup');
-        mockup.classList.remove('slide-in-bottom');
-        void mockup.offsetWidth; // reflow
-        mockup.classList.add('slide-in-bottom');
-
-        startTimer();
+        // Reset X-Ray
+        document.querySelectorAll('.fake-link').forEach(l => l.classList.remove('xray-active'));
     }
 
-    function startTimer() {
-        timeLeft = 30;
-        updateTimerUI();
-        clearInterval(timerInterval);
+    function handleDecision(decision) {
+        if (!currentScenario) return;
+        const s = currentScenario;
 
-        timerInterval = setInterval(() => {
-            timeLeft--;
-            updateTimerUI();
+        // Correct Action Logic: Report if phishing, Archive if safe
+        // BUT strict logic: Only Report Phishing triggers quiz? 
+        // Or if user says "Archive" on a safe email, that's also correct.
 
-            if (timeLeft <= 0) {
-                clearInterval(timerInterval);
-                checkAnswer('timeout');
+        const isCorrectAction = (decision === 'report' && s.type === 'phishing') ||
+            (decision === 'archive' && s.type === 'safe');
+
+        if (isCorrectAction) {
+            if (decision === 'report') {
+                // Trigger Quiz for Phishing
+                quizModal.show();
+            } else {
+                // Safe email correctly archived - specific win path
+                processResult(true, 0); // 0 bonus, standard points
             }
-        }, 1000);
-    }
-
-    function updateTimerUI() {
-        const percent = (timeLeft / 30) * 100;
-        document.getElementById('timer-bar').style.width = `${percent}%`;
-        document.getElementById('timer-text').innerText = `${timeLeft}s`;
-
-        // Color Change
-        const bar = document.getElementById('timer-bar');
-        if (timeLeft > 20) bar.className = "progress-bar bg-success";
-        else if (timeLeft > 10) bar.className = "progress-bar bg-warning";
-        else bar.className = "progress-bar bg-danger";
-    }
-
-    function checkAnswer(userChoice) {
-        clearInterval(timerInterval);
-
-        const s = scenarios[currentIdx];
-        const isCorrect = userChoice === s.type;
-
-        // Timeout handling
-        if (userChoice === 'timeout') {
-            // Treat as wrong
-            streak = 0;
-        } else if (isCorrect) {
-            score++;
-            streak++;
-            if (streak > maxStreak) maxStreak = streak;
         } else {
-            streak = 0;
+            // Wrong Decision
+            processResult(false, 0);
+        }
+    }
+
+    function submitQuiz(answer) {
+        // Simple logic: Any "reasonable" answer gets points
+        quizModal.hide();
+        setTimeout(() => processResult(true, 25), 300); // 25 Bonus XP
+    }
+
+    function processResult(isSuccess, bonusXP) {
+        const s = currentScenario;
+
+        if (isSuccess) {
+            combo++;
+            const baseXP = s.xp || 50;
+            const streakBonus = Math.min(combo * 10, 50);
+            const totalXP = baseXP + streakBonus + bonusXP;
+
+            score += totalXP;
+            xp += totalXP;
+            checkLevelUp();
+
+            showFeedback(true, totalXP);
+        } else {
+            combo = 0;
+            health--;
+            updateHealthUI();
+            showFeedback(false, 0);
+        }
+        updateHUD();
+    }
+
+    function usePowerUp(type) {
+        if (type === 'xray') {
+            if (score < 50) return alert("Not enough score!");
+            score -= 50;
+            document.querySelectorAll('.fake-link').forEach(l => l.classList.add('xray-active'));
+        } else if (type === 'hint') {
+            if (score < 30) return alert("Not enough score!");
+            score -= 30;
+            const hint = currentScenario.type === 'phishing' ? "This email looks suspicious..." : "This sender looks legitimate.";
+            document.getElementById('ai-hint-text').innerText = hint;
+            document.getElementById('ai-hint-box').classList.remove('d-none');
+        }
+        updateHUD();
+    }
+
+    function showFeedback(isCorrect, gainedXP) {
+        const s = currentScenario;
+
+        const color = isCorrect ? 'var(--success)' : 'var(--danger)';
+        document.getElementById('feedback-color-bar').style.backgroundColor = color;
+
+        document.getElementById('modal-verdict').innerText = isCorrect ? 'Correct!' : 'Wrong Answer';
+        document.getElementById('modal-verdict').style.color = color;
+        document.getElementById('modal-icon').innerText = isCorrect ? '🎉' : '❌';
+
+        if (isCorrect) {
+            document.getElementById('modal-xp').innerText = `+${gainedXP} XP`;
+            document.getElementById('modal-xp').className = 'badge badge-pill badge-warning mr-2';
+            document.getElementById('modal-streak').innerText = combo > 1 ? `Streak x${combo}` : '';
+        } else {
+            document.getElementById('modal-xp').innerText = '-1 Health';
+            document.getElementById('modal-xp').className = 'badge badge-pill badge-danger mr-2';
+            document.getElementById('modal-streak').innerText = '';
         }
 
-        updateStats();
+        document.getElementById('modal-tip').innerText = s.tip || "Always check the sender address carefully!";
+        document.getElementById('modal-reason').innerHTML = s.feedback;
 
-        // Show result
-        document.getElementById('scenario-card').style.display = 'none';
-        document.getElementById('result-card').style.display = 'flex';
-
-        const feedbackIcon = document.getElementById('feedback-icon');
-        const feedbackTitle = document.getElementById('feedback-title');
-
-        if (userChoice === 'timeout') {
-            feedbackIcon.innerText = "⏰";
-            feedbackTitle.innerText = "Time's Up!";
-            feedbackTitle.style.color = "var(--warning)";
-        } else if (isCorrect) {
-            feedbackIcon.innerText = "🎉";
-            feedbackTitle.innerText = "Correct!";
-            feedbackTitle.style.color = "var(--success)";
-        } else {
-            feedbackIcon.innerText = "❌";
-            feedbackTitle.innerText = "Incorrect";
-            feedbackTitle.style.color = "var(--danger)";
-        }
-
-        document.getElementById('feedback-desc').innerHTML = s.reason;
-    }
-
-    function updateStats() {
-        document.getElementById('score-display').innerText = score;
-        document.getElementById('streak-display').innerText = streak;
+        feedbackModal.show();
     }
 
     function nextScenario() {
+        feedbackModal.hide();
         currentIdx++;
-        loadScenario();
+        if (health <= 0) {
+            setTimeout(() => endGame(false), 300);
+        } else {
+            startRound();
+        }
     }
 
-    function showFinalScore() {
-        clearInterval(timerInterval);
+    function updateHealthUI() {
+        let hearts = '';
+        for (let i = 0; i < 3; i++) {
+            hearts += i < health ? '❤️' : '🖤';
+        }
+        document.getElementById('health-bar').innerText = hearts;
+    }
 
-        // Hide game elements
-        document.getElementById('scenario-card').style.display = 'none';
-        document.getElementById('result-card').style.display = 'none';
+    function updateHUD() {
+        document.getElementById('score-val').innerText = score;
+        document.getElementById('combo-val').innerText = combo;
+        let nextLevelXP = LEVEL_THRESHOLDS[level] || 9999;
+        let prevLevelXP = LEVEL_THRESHOLDS[level - 1] || 0;
+        let progress = ((xp - prevLevelXP) / (nextLevelXP - prevLevelXP)) * 100;
+        document.getElementById('xp-bar').style.width = `${progress}%`;
+    }
 
-        // Hide the gamification bar (it's a class, so use querySelector)
-        const gamificationBar = document.querySelector('.gamification-bar');
-        if (gamificationBar) gamificationBar.style.display = 'none';
+    function checkLevelUp() {
+        if (xp >= LEVEL_THRESHOLDS[level]) {
+            level++;
+            document.getElementById('level-badge').innerText = `Lvl ${level}`;
+        }
+    }
 
-        // Show Final Card
-        document.getElementById('final-card').style.display = 'block';
-
-        document.getElementById('final-score-value').innerText = `${score} / ${scenarios.length}`;
-        document.getElementById('final-streak-value').innerText = maxStreak;
+    function endGame(victory) {
+        document.getElementById('email-content').classList.add('d-none');
+        if (victory) {
+            document.getElementById('victory-state').classList.remove('d-none');
+            document.getElementById('victory-state').classList.add('d-flex');
+            document.getElementById('victory-score').innerText = score;
+        } else {
+            document.getElementById('game-over-state').classList.remove('d-none');
+            document.getElementById('game-over-state').classList.add('d-flex');
+            document.getElementById('final-score').innerText = score;
+        }
     }
 </script>
 {% endblock %}
