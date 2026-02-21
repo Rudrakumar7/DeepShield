@@ -1,90 +1,103 @@
 {% extends "base.html" %}
 
+<div id="vanta-bg"></div>
+
 {% block content %}
-<div class="hero-section text-center">
-    <h1 class="hero-title">Secure Your Digital Reality with <span class="text-gradient">DeepShield</span></h1>
-    <p class="hero-subtitle">The advanced AI-powered platform to detect deepfakes in image, audio, and video content.
-        Cybersecurity for the modern age.</p>
-    <div class="hero-actions mt-4">
-        {% if current_user.is_authenticated %}
-        <a href="{{ url_for('dashboard') }}" class="btn-primary">Go to Dashboard</a>
-        {% else %}
-        <a href="{{ url_for('register') }}" class="btn-primary">Start Scanning</a>
-        <a href="#features" class="btn-secondary">Learn More</a>
-        {% endif %}
+<div class="hero-container">
+    <div class="hero-section text-center">
+        <h1 class="hero-title animate-fade-in-up">Secure Your Digital Reality with <span
+                class="text-gradient">DeepShield</span></h1>
+        <p class="hero-subtitle animate-fade-in-up delay-100">The advanced AI-powered platform to detect deepfakes in
+            image, audio, and video content.
+            Cybersecurity for the modern age.</p>
+        <div class="hero-actions mt-4 animate-fade-in-up delay-200">
+            {% if current_user.is_authenticated %}
+            <a href="{{ url_for('dashboard') }}" class="btn-primary">Go to Dashboard</a>
+            {% else %}
+            <a href="{{ url_for('login') }}" class="btn-primary">Get Started</a>
+            <a href="{{ url_for('register') }}" class="btn-secondary">Register</a>
+            {% endif %}
+        </div>
     </div>
 </div>
 
-<div id="features" class="features-grid mt-4">
-    <a href="{{ url_for('detect_image') }}" class="feature-card glass no-underline">
-        <h3>📸 Image Detection</h3>
-        <p>Analyze pixel patterns to detect GAN-generated faces and artifacts.</p>
-    </a>
-    <a href="{{ url_for('detect_audio') }}" class="feature-card glass no-underline">
-        <h3>🎙️ Audio Analysis</h3>
-        <p>Identify voice cloning and synthesized speech anomalies.</p>
-    </a>
-    <a href="{{ url_for('detect_video') }}" class="feature-card glass no-underline">
-        <h3>🎥 Video Scanning</h3>
-        <p>Frame-by-frame deepfake analysis for comprehensive protection.</p>
-    </a>
-    <a href="{{ url_for('tools') }}" class="feature-card glass no-underline">
-        <h3>🛡️ Security Tools</h3>
-        <p>Password Strength, Generator, & Phishing Checker.</p>
-    </a>
-    <a href="{{ url_for('cyber_news') }}" class="feature-card glass no-underline">
-        <h3>📰 Cyber News</h3>
-        <p>Stay updated with real-time cybersecurity news feeds.</p>
-    </a>
-    <a href="{{ url_for('awareness') }}" class="feature-card glass no-underline">
-        <h3>🧠 Cyber Awareness</h3>
-        <p>Learn about phishing, deepfakes, and staying safe online.</p>
-    </a>
-    <a href="{{ url_for('academy') }}" class="feature-card glass no-underline">
-        <h3>🎓 Cyber Academy</h3>
-        <p>Master cybersecurity with guided learning paths and career resources.</p>
-    </a>
-</div>
-
 <style>
+    /* Reset & Layout */
+    #vanta-bg {
+        position: fixed;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        z-index: -1;
+    }
+
+    .hero-container {
+        height: 80vh;
+        /* Occupy most of the screen */
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        position: relative;
+        z-index: 1;
+        /* Above background */
+    }
+
     .hero-section {
-        padding: 5rem 1rem;
+        padding: 2rem;
+        background: rgba(15, 12, 41, 0.4);
+        /* Slight backdrop for legibility */
+        backdrop-filter: blur(5px);
+        border-radius: 20px;
+        border: 1px solid rgba(255, 255, 255, 0.05);
+        max-width: 900px;
+        width: 90%;
     }
 
     .hero-title {
-        font-size: 3.5rem;
-        margin-bottom: 1rem;
-        line-height: 1.2;
+        font-size: 4rem;
+        margin-bottom: 1.5rem;
+        line-height: 1.1;
+        font-weight: 700;
+        text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
     }
 
     .hero-subtitle {
-        font-size: 1.2rem;
-        color: var(--text-secondary);
-        max-width: 600px;
-        margin: 0 auto;
+        font-size: 1.3rem;
+        color: #e0e0e0;
+        max-width: 700px;
+        margin: 0 auto 2rem;
+        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
     }
 
-    .features-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-        gap: 2rem;
-        padding: 2rem 0;
-    }
-
-    .feature-card {
-        padding: 2rem;
-        text-align: center;
-        transition: transform 0.3s;
-    }
-
-    .feature-card:hover {
-        transform: translateY(-5px);
-        box-shadow: 0 10px 20px rgba(0, 210, 255, 0.15);
-    }
-
-    .feature-card h3 {
-        margin-bottom: 1rem;
-        color: var(--primary-accent);
+    /* Override base styles if needed for this specific page */
+    .btn-primary {
+        padding: 1rem 2.5rem;
+        font-size: 1.1rem;
     }
 </style>
+
+<!-- Vanta.js Scripts -->
+<script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r134/three.min.js"></script>
+<script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', () => {
+        VANTA.NET({
+            el: "#vanta-bg",
+            mouseControls: true,
+            touchControls: true,
+            gyroControls: false,
+            minHeight: 200.00,
+            minWidth: 200.00,
+            scale: 1.00,
+            scaleMobile: 1.00,
+            color: 0x00d2ff,       /* Primary Accent */
+            backgroundColor: 0x0f0c29, /* Dark BG */
+            points: 12.00,
+            maxDistance: 22.00,
+            spacing: 18.00,
+            showDots: true
+        })
+    });
+</script>
 {% endblock %}

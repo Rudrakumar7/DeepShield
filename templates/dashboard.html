@@ -1,139 +1,464 @@
-{% extends "base.html" %}
+<!DOCTYPE html>
+<html lang="en">
 
-{% block content %}
-<h2 class="mb-4">Hello, <span class="text-gradient">{{ name }}</span></h2>
-<p class="form-label mb-4">Select a tool to get started.</p>
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>DeepShield | Dashboard</title>
 
-<div class="dashboard-grid">
-    <!-- Image Detection -->
-    <a href="{{ url_for('detect_image') }}" class="dashboard-card glass">
-        <div class="icon">📸</div>
-        <h3>Image Detection</h3>
-        <p>Detect deepfakes in photos.</p>
-        <div class="card-arrow">→</div>
-    </a>
+    <!-- Fonts -->
+    <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&display=swap" rel="stylesheet">
 
-    <!-- Audio Detection -->
-    <a href="{{ url_for('detect_audio') }}" class="dashboard-card glass">
-        <div class="icon">🎙️</div>
-        <h3>Audio Detection</h3>
-        <p>Analyze voice recordings.</p>
-        <div class="card-arrow">→</div>
-    </a>
+    <!-- Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
 
-    <!-- Video Detection -->
-    <a href="{{ url_for('detect_video') }}" class="dashboard-card glass">
-        <div class="icon">🎥</div>
-        <h3>Video Detection</h3>
-        <p>Scan videos for manipulation.</p>
-        <div class="card-arrow">→</div>
-    </a>
+    <!-- Icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
 
-    <!-- Cyber Tools -->
-    <a href="{{ url_for('tools') }}" class="dashboard-card glass feature-highlight">
-        <div class="icon">🛡️</div>
-        <h3>Security Tools</h3>
-        <p>Password Gen, Strength Check, Phishing & more.</p>
-        <div class="card-arrow">→</div>
-    </a>
+    <script>
+        tailwind.config = {
+            theme: {
+                extend: {
+                    fontFamily: {
+                        sans: ['Outfit', 'sans-serif'],
+                    },
+                    colors: {
+                        bg: {
+                            dark: '#0f0c29', // Main background
+                            panel: '#1a163a', // Panel background
+                        },
+                        brand: {
+                            primary: '#00d2ff', // Cyan
+                            secondary: '#9d50bb', // Purple
+                            accent: '#ff4b8b', // Pinkish accent
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+    <style>
+        body {
+            background-color: #0f0c29;
+            background-image: linear-gradient(135deg, #0f0c29 0%, #302b63 100%);
+            color: white;
+            min-height: 100vh;
+        }
 
+        .glass-card {
+            background: rgba(255, 255, 255, 0.03);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            transition: all 0.3s ease;
+        }
 
+        .glass-card:hover {
+            transform: translateY(-5px);
+            background: rgba(255, 255, 255, 0.06);
+            border-color: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 10px 40px -10px rgba(0, 0, 0, 0.5);
+        }
 
-    <!-- Cyber News -->
-    <a href="{{ url_for('cyber_news') }}" class="dashboard-card glass">
-        <div class="icon">📰</div>
-        <h3>Cyber News</h3>
-        <p>Latest security updates & trends.</p>
-        <div class="card-arrow">→</div>
-    </a>
+        .slide-panel {
+            transition: transform 0.4s cubic-bezier(0.16, 1, 0.3, 1);
+        }
 
-    <!-- Cyber Awareness -->
-    <a href="{{ url_for('awareness') }}" class="dashboard-card glass">
-        <div class="icon">🧠</div>
-        <h3>Cyber Awareness</h3>
-        <p>Educational modules & safety tips.</p>
-        <div class="card-arrow">→</div>
-    </a>
+        .slide-panel.closed {
+            transform: translateX(100%);
+        }
 
-    <!-- Cyber Academy -->
-    <a href="{{ url_for('academy') }}" class="dashboard-card glass">
-        <div class="icon">🎓</div>
-        <h3>Cyber Academy</h3>
-        <p>Learning paths & career guide.</p>
-        <div class="card-arrow">→</div>
-    </a>
+        .slide-panel.open {
+            transform: translateX(0);
+        }
+    </style>
+</head>
 
-    <!-- Recent Scans (Placeholder) -->
-    <div class="dashboard-card glass history-card" style="grid-column: 1 / -1; margin-top: 1rem;">
-        <h3>Recent Scans</h3>
-        <p class="text-secondary" style="font-size: 0.9rem;">No recent scans found.</p>
+<body class="relative overflow-x-hidden">
+
+    <!-- Top Navbar -->
+    <header
+        class="h-20 flex items-center justify-between px-6 md:px-12 sticky top-0 z-50 bg-bg-dark/80 backdrop-blur-md border-b border-white/5">
+        <!-- Logo -->
+        <a href="#" class="flex items-center gap-3 group">
+            <div
+                class="w-10 h-10 rounded-xl bg-gradient-to-br from-brand-primary to-brand-secondary flex items-center justify-center shadow-lg group-hover:scale-105 transition-transform">
+                <i class="fa-solid fa-shield-halved text-white text-lg"></i>
+            </div>
+            <span class="text-xl font-bold tracking-wide">DeepShield</span>
+        </a>
+
+        <!-- Profile Avatar Trigger -->
+        <button onclick="toggleSidebar()" class="group relative">
+            <div
+                class="flex items-center gap-3 p-1.5 pr-4 rounded-full bg-white/5 hover:bg-white/10 border border-white/5 transition-all">
+                <div
+                    class="w-9 h-9 rounded-full bg-gradient-to-br from-brand-secondary to-pink-500 flex items-center justify-center text-sm font-bold shadow-inner">
+                    {{ current_user.username[0].upper() }}
+                </div>
+                <span class="text-sm font-medium text-gray-300 group-hover:text-white hidden md:block">Profile</span>
+                <i class="fa-solid fa-bars text-gray-400 group-hover:text-white transition-colors"></i>
+            </div>
+        </button>
+    </header>
+
+    <!-- Main Content -->
+    <main class="max-w-6xl mx-auto px-6 md:px-12 py-12">
+        <!-- Welcome Section -->
+        <div class="mb-12 text-center md:text-left">
+            <h1 class="text-4xl md:text-5xl font-bold mb-4">Hello, <span
+                    class="bg-clip-text text-transparent bg-gradient-to-r from-brand-primary to-brand-secondary">{{
+                    current_user.username }}</span> 👋</h1>
+            <p class="text-xl text-gray-400">Select a tool to get started with your security check.</p>
+        </div>
+
+        <!-- Features Grid -->
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+
+            <!-- Image Detection (Brand Cyan) -->
+            <a href="{{ url_for('detect_image') }}"
+                class="group relative p-8 rounded-2xl bg-white/5 border border-white/5 overflow-hidden hover:-translate-y-2 transition-all duration-300 hover:shadow-2xl hover:shadow-brand-primary/20">
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-brand-primary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                </div>
+
+                <div class="relative z-10 flex flex-col h-full">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-brand-primary/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 text-brand-primary">
+                        <i class="fa-solid fa-image text-2xl"></i>
+                    </div>
+
+                    <h3 class="text-xl font-semibold mb-2 text-white group-hover:text-brand-primary transition-colors">
+                        Image Detection</h3>
+                    <p class="text-gray-400 text-sm mb-6 leading-relaxed">Detect deepfakes in photos quickly and
+                        accurately.</p>
+
+                    <div
+                        class="mt-auto flex items-center text-sm font-medium text-brand-primary opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                        Open Tool <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Audio Detection (Purple) -->
+            <a href="{{ url_for('detect_audio') }}"
+                class="group relative p-8 rounded-2xl bg-white/5 border border-white/5 overflow-hidden hover:-translate-y-2 transition-all duration-300 hover:shadow-2xl hover:shadow-brand-secondary/20">
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-brand-secondary/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                </div>
+
+                <div class="relative z-10 flex flex-col h-full">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-brand-secondary/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 text-brand-secondary">
+                        <i class="fa-solid fa-microphone-lines text-2xl"></i>
+                    </div>
+
+                    <h3
+                        class="text-xl font-semibold mb-2 text-white group-hover:text-brand-secondary transition-colors">
+                        Audio Detection</h3>
+                    <p class="text-gray-400 text-sm mb-6 leading-relaxed">Analyze voice recordings to identify synthetic
+                        audio.</p>
+
+                    <div
+                        class="mt-auto flex items-center text-sm font-medium text-brand-secondary opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                        Open Tool <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Video Detection (Indigo) -->
+            <a href="{{ url_for('detect_video') }}"
+                class="group relative p-8 rounded-2xl bg-white/5 border border-white/5 overflow-hidden hover:-translate-y-2 transition-all duration-300 hover:shadow-2xl hover:shadow-indigo-500/20">
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-indigo-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                </div>
+
+                <div class="relative z-10 flex flex-col h-full">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-indigo-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 text-indigo-400">
+                        <i class="fa-solid fa-film text-2xl"></i>
+                    </div>
+
+                    <h3 class="text-xl font-semibold mb-2 text-white group-hover:text-indigo-400 transition-colors">
+                        Video Detection</h3>
+                    <p class="text-gray-400 text-sm mb-6 leading-relaxed">Scan videos for manipulation or deepfake
+                        content.</p>
+
+                    <div
+                        class="mt-auto flex items-center text-sm font-medium text-indigo-400 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                        Open Tool <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Security Tools (Emerald) -->
+            <a href="{{ url_for('tools') }}"
+                class="group relative p-8 rounded-2xl bg-white/5 border border-white/5 overflow-hidden hover:-translate-y-2 transition-all duration-300 hover:shadow-2xl hover:shadow-emerald-500/20">
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-emerald-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                </div>
+
+                <div class="relative z-10 flex flex-col h-full">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-emerald-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 text-emerald-400">
+                        <i class="fa-solid fa-toolbox text-2xl"></i>
+                    </div>
+
+                    <h3 class="text-xl font-semibold mb-2 text-white group-hover:text-emerald-400 transition-colors">
+                        Security Tools</h3>
+                    <p class="text-gray-400 text-sm mb-6 leading-relaxed">Access password generator, strength checker,
+                        and phishing tools.</p>
+
+                    <div
+                        class="mt-auto flex items-center text-sm font-medium text-emerald-400 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                        Open Tool <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Cyber News (Orange) -->
+            <a href="{{ url_for('cyber_news') }}"
+                class="group relative p-8 rounded-2xl bg-white/5 border border-white/5 overflow-hidden hover:-translate-y-2 transition-all duration-300 hover:shadow-2xl hover:shadow-orange-500/20">
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-orange-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                </div>
+
+                <div class="relative z-10 flex flex-col h-full">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-orange-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 text-orange-400">
+                        <i class="fa-solid fa-newspaper text-2xl"></i>
+                    </div>
+
+                    <h3 class="text-xl font-semibold mb-2 text-white group-hover:text-orange-400 transition-colors">
+                        Cyber News</h3>
+                    <p class="text-gray-400 text-sm mb-6 leading-relaxed">Stay updated with latest cybersecurity trends.
+                    </p>
+
+                    <div
+                        class="mt-auto flex items-center text-sm font-medium text-orange-400 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                        Open Tool <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Cyber Awareness (Pink) -->
+            <a href="{{ url_for('awareness') }}"
+                class="group relative p-8 rounded-2xl bg-white/5 border border-white/5 overflow-hidden hover:-translate-y-2 transition-all duration-300 hover:shadow-2xl hover:shadow-pink-500/20">
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-pink-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                </div>
+
+                <div class="relative z-10 flex flex-col h-full">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-pink-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 text-pink-400">
+                        <i class="fa-solid fa-graduation-cap text-2xl"></i>
+                    </div>
+
+                    <h3 class="text-xl font-semibold mb-2 text-white group-hover:text-pink-400 transition-colors">Cyber
+                        Awareness</h3>
+                    <p class="text-gray-400 text-sm mb-6 leading-relaxed">Learn safety tips and best practices.</p>
+
+                    <div
+                        class="mt-auto flex items-center text-sm font-medium text-pink-400 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                        Open Tool <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </div>
+                </div>
+            </a>
+
+            <!-- Cyber Academy (Teal) -->
+            <a href="{{ url_for('academy') }}"
+                class="group relative p-8 rounded-2xl bg-white/5 border border-white/5 overflow-hidden hover:-translate-y-2 transition-all duration-300 hover:shadow-2xl hover:shadow-teal-500/20">
+                <div
+                    class="absolute inset-0 bg-gradient-to-br from-teal-500/10 to-transparent opacity-0 group-hover:opacity-100 transition-opacity duration-300">
+                </div>
+
+                <div class="relative z-10 flex flex-col h-full">
+                    <div
+                        class="w-14 h-14 rounded-2xl bg-teal-500/20 flex items-center justify-center mb-6 group-hover:scale-110 transition-transform duration-300 text-teal-400">
+                        <i class="fa-solid fa-user-graduate text-2xl"></i>
+                    </div>
+
+                    <h3 class="text-xl font-semibold mb-2 text-white group-hover:text-teal-400 transition-colors">Cyber
+                        Academy</h3>
+                    <p class="text-gray-400 text-sm mb-6 leading-relaxed">Professional certifications & career paths.
+                    </p>
+
+                    <div
+                        class="mt-auto flex items-center text-sm font-medium text-teal-400 opacity-0 group-hover:opacity-100 transform translate-y-2 group-hover:translate-y-0 transition-all duration-300">
+                        Open Tool <i class="fa-solid fa-arrow-right ml-2"></i>
+                    </div>
+                </div>
+            </a>
+
+        </div>
+    </main>
+
+    <!-- Slide-out Sidebar Overlay -->
+    <div id="sidebar-overlay" onclick="toggleSidebar()"
+        class="fixed inset-0 bg-black/60 backdrop-blur-sm z-40 hidden opacity-0 transition-opacity duration-300"></div>
+
+    <!-- Slide-out Sidebar Panel -->
+    <aside id="sidebar-panel"
+        class="fixed top-0 right-0 h-full w-80 bg-bg-panel/95 backdrop-blur-xl border-l border-white/10 z-50 slide-panel closed shadow-2xl flex flex-col">
+        <!-- Close Button -->
+        <div class="p-6 flex justify-end">
+            <button onclick="toggleSidebar()"
+                class="w-8 h-8 rounded-full bg-white/5 hover:bg-white/10 flex items-center justify-center text-gray-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-xmark"></i>
+            </button>
+        </div>
+
+        <!-- User Profile Section -->
+        <div class="px-8 pb-8 flex flex-col items-center text-center border-b border-white/5">
+            <div
+                class="w-24 h-24 rounded-full bg-gradient-to-tr from-brand-secondary to-pink-500 flex items-center justify-center text-4xl font-bold shadow-xl mb-4 text-white">
+                {{ current_user.username[0].upper() }}
+            </div>
+            <h3 class="text-xl font-bold text-white">{{ current_user.username }}</h3>
+            <p class="text-sm text-gray-400 mb-4">{{ current_user.email }}</p>
+            <a href="{{ url_for('profile') }}"
+                class="px-4 py-2 rounded-lg bg-brand-primary/10 text-brand-primary text-sm font-medium hover:bg-brand-primary/20 transition-colors border border-brand-primary/20">
+                Edit Profile
+            </a>
+        </div>
+
+        <!-- Navigation Links -->
+        <nav class="flex-1 overflow-y-auto px-6 py-6 space-y-2">
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-xl bg-white/5 text-white font-medium border border-white/5">
+                <i class="fa-solid fa-grid-2 w-5 text-center text-brand-primary"></i>
+                Dashboard
+            </a>
+            <a href="{{ url_for('detect_image') }}"
+                class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-image w-5 text-center"></i>
+                Image Detection
+            </a>
+            <a href="{{ url_for('detect_audio') }}"
+                class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-microphone-lines w-5 text-center"></i>
+                Audio Detection
+            </a>
+            <a href="{{ url_for('detect_video') }}"
+                class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-film w-5 text-center"></i>
+                Video Detection
+            </a>
+            <a href="{{ url_for('academy') }}"
+                class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-user-graduate w-5 text-center"></i>
+                Cyber Academy
+            </a>
+            <div class="my-4 border-t border-white/5"></div>
+            <a href="{{ url_for('tools') }}"
+                class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-toolbox w-5 text-center"></i>
+                Security Tools
+            </a>
+            <a href="#"
+                class="flex items-center gap-4 px-4 py-3 rounded-xl hover:bg-white/5 text-gray-400 hover:text-white transition-colors">
+                <i class="fa-solid fa-gear w-5 text-center"></i>
+                Settings
+            </a>
+        </nav>
+
+        <!-- Logout -->
+        <div class="p-6 border-t border-white/5">
+            <a href="{{ url_for('logout') }}"
+                class="flex items-center justify-center gap-2 w-full py-3 rounded-xl bg-red-500/10 text-red-400 hover:bg-red-500/20 font-medium transition-colors border border-red-500/20">
+                <i class="fa-solid fa-arrow-right-from-bracket"></i>
+                Sign Out
+            </a>
+        </div>
+    </aside>
+
+    <script>
+        function toggleSidebar() {
+            const panel = document.getElementById('sidebar-panel');
+            const overlay = document.getElementById('sidebar-overlay');
+
+            if (panel.classList.contains('closed')) {
+                // Open
+                panel.classList.remove('closed');
+                panel.classList.add('open');
+                overlay.classList.remove('hidden');
+                setTimeout(() => overlay.classList.remove('opacity-0'), 10);
+            } else {
+                // Close
+                panel.classList.remove('open');
+                panel.classList.add('closed');
+                overlay.classList.add('opacity-0');
+                setTimeout(() => overlay.classList.add('hidden'), 300);
+            }
+        }
+    </script>
+    <!-- Chatbot Widget -->
+    <div id="chat-widget"
+        class="fixed bottom-24 right-8 w-80 h-96 bg-bg-panel/95 backdrop-blur-xl border border-white/10 rounded-2xl shadow-2xl flex flex-col hidden z-50 transition-all">
+        <!-- Header -->
+        <div class="p-4 border-b border-white/10 flex justify-between items-center bg-brand-primary/10 rounded-t-2xl cursor-pointer"
+            onclick="toggleChat()">
+            <div class="flex items-center gap-2">
+                <div class="w-2 h-2 rounded-full bg-green-500 animate-pulse"></div>
+                <span class="font-semibold text-white">DeepShield Assistant</span>
+            </div>
+            <i class="fa-solid fa-chevron-down text-gray-400"></i>
+        </div>
+
+        <!-- Body -->
+        <div id="chat-body" class="flex-1 overflow-y-auto p-4 space-y-3">
+            <div class="bot-message">
+                Hello! I'm DeepShield Assistant. How can I help you regarding security, tools, or detection?
+            </div>
+        </div>
+
+        <!-- Input -->
+        <div class="p-4 border-t border-white/10 flex gap-2">
+            <input type="text" id="chat-input" placeholder="Ask something..." onkeypress="handleChatInput(event)"
+                class="flex-1 bg-white/5 border border-white/10 rounded-lg px-3 py-2 text-sm text-white focus:outline-none focus:border-brand-primary/50 transition-colors">
+            <button onclick="sendMessage()"
+                class="w-10 h-10 rounded-lg bg-brand-primary/20 text-brand-primary hover:bg-brand-primary/30 flex items-center justify-center transition-colors">
+                <i class="fa-solid fa-paper-plane"></i>
+            </button>
+        </div>
     </div>
-</div>
 
-<style>
-    .dashboard-grid {
-        display: grid;
-        grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-        gap: 1.5rem;
-        margin-top: 2rem;
-    }
+    <!-- Launcher -->
+    <button id="chat-launcher" onclick="toggleChat()"
+        class="fixed bottom-8 right-8 w-14 h-14 rounded-full bg-gradient-to-tr from-brand-secondary to-pink-500 text-white shadow-lg shadow-brand-secondary/30 flex items-center justify-center text-2xl hover:scale-110 transition-transform z-40">
+        <i class="fa-solid fa-message"></i>
+    </button>
 
-    .dashboard-card {
-        padding: 2rem;
-        text-decoration: none;
-        color: var(--text-primary);
-        display: flex;
-        flex-direction: column;
-        justify-content: space-between;
-        min-height: 200px;
-        transition: all 0.3s;
-        position: relative;
-        overflow: hidden;
-    }
+    <!-- Chatbot CSS -->
+    <style>
+        .chat-message {
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+            max-width: 85%;
+            word-wrap: break-word;
+            margin-bottom: 0.5rem;
+        }
 
-    .dashboard-card:hover {
-        transform: translateY(-5px);
-        border-color: var(--primary-accent);
-        background: rgba(255, 255, 255, 0.08);
-    }
+        .user-message {
+            background-color: rgba(0, 210, 255, 0.2);
+            color: white;
+            margin-left: auto;
+            border-bottom-right-radius: 0;
+        }
 
-    .dashboard-card .icon {
-        font-size: 2.5rem;
-        margin-bottom: 1rem;
-    }
+        .bot-message {
+            background-color: rgba(255, 255, 255, 0.05);
+            color: #e5e7eb;
+            margin-right: auto;
+            border-bottom-left-radius: 0;
+            padding: 0.75rem;
+            border-radius: 0.5rem;
+            font-size: 0.875rem;
+        }
+    </style>
 
-    .dashboard-card h3 {
-        margin-bottom: 0.5rem;
-        font-size: 1.25rem;
-    }
+    <!-- Chatbot Logic -->
+    <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
 
-    .dashboard-card p {
-        color: var(--text-secondary);
-        font-size: 0.9rem;
-    }
-
-    .card-arrow {
-        position: absolute;
-        bottom: 2rem;
-        right: 2rem;
-        opacity: 0;
-        transition: all 0.3s;
-        color: var(--primary-accent);
-        font-size: 1.5rem;
-    }
-
-    .dashboard-card:hover .card-arrow {
-        opacity: 1;
-        right: 1.5rem;
-    }
-
-    .feature-highlight {
-        border-color: rgba(157, 80, 187, 0.3);
-    }
-
-    .history-card {
-        grid-column: 1 / -1;
-        min-height: auto;
-    }
-</style>
-{% endblock %}
+</html>

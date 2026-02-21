@@ -68,6 +68,22 @@ def register():
 def dashboard():
     return render_template('dashboard.html', name=current_user.username)
 
+@app.route('/profile', methods=['GET', 'POST'])
+@login_required
+def profile():
+    if request.method == 'POST':
+        username = request.form.get('username')
+        email = request.form.get('email')
+        current_user.username = username
+        current_user.email = email
+        password = request.form.get('password')
+        if password:
+            current_user.password_hash = generate_password_hash(password)
+        db.session.commit()
+        flash('Profile updated successfully!', 'success')
+        return redirect(url_for('profile'))
+    return render_template('profile.html')
+
 @app.route('/academy')
 @login_required
 def academy():
