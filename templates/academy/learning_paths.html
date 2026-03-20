@@ -25,7 +25,7 @@
 
         {% for key, path in paths.items() %}
         <div class="tab-pane fade {% if loop.first %}show active{% endif %}" id="pills-{{ key }}" role="tabpanel">
-            <div class="glass p-5 border-left-{{ path.color }}">
+            <div class="modern-card p-5 text-left border-left-{{ path.color }}">
                 <h2 class="text-{{ path.color }} mb-2">{{ path.title }}</h2>
                 <p class="lead mb-4">{{ path.description }}</p>
 

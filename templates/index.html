@@ -4,22 +4,202 @@
 
 {% block content %}
 <div class="hero-container">
+    <div class="hero-glow-blob"></div>
     <div class="hero-section text-center">
-        <h1 class="hero-title animate-fade-in-up">Secure Your Digital Reality with <span
-                class="text-gradient">DeepShield</span></h1>
-        <p class="hero-subtitle animate-fade-in-up delay-100">The advanced AI-powered platform to detect deepfakes in
-            image, audio, and video content.
-            Cybersecurity for the modern age.</p>
-        <div class="hero-actions mt-4 animate-fade-in-up delay-200">
+        <div class="badge-pill animate-fade-in-up">🚀 Next-Gen AI Security</div>
+        <h1 class="hero-title animate-fade-in-up delay-100">Secure Your Digital Reality with <br><span
+                class="text-gradient drop-glow">DeepShield</span></h1>
+        <p class="hero-subtitle animate-fade-in-up delay-200">The advanced AI-powered platform to detect deepfakes in
+            image, audio, and video content. Cybersecurity designed for the modern age.</p>
+        <div class="hero-actions animate-fade-in-up delay-300">
             {% if current_user.is_authenticated %}
-            <a href="{{ url_for('dashboard') }}" class="btn-primary">Go to Dashboard</a>
+            <a href="{{ url_for('dashboard') }}" class="btn-primary btn-lg">Go to Dashboard</a>
+            <a href="#features" class="btn-secondary btn-lg">Learn More</a>
             {% else %}
-            <a href="{{ url_for('login') }}" class="btn-primary">Get Started</a>
-            <a href="{{ url_for('register') }}" class="btn-secondary">Register</a>
+            <a href="{{ url_for('register') }}" class="btn-primary btn-lg">Get Started</a>
+            <a href="#features" class="btn-secondary btn-lg">Learn More</a>
             {% endif %}
         </div>
     </div>
 </div>
+
+<!-- Features Section -->
+<section id="features" class="section-wrapper reveal-on-scroll">
+    <h2 class="section-title">Why Choose DeepShield?</h2>
+    <p class="section-subtitle">Our platform leverages state-of-the-art machine learning models to analyze and verify
+        your digital media, keeping your reality secure.</p>
+    <div class="modern-card-grid">
+        <div class="modern-card modern-card-center">
+            <div class="modern-card-icon">
+                <i class="fa-solid fa-image"></i>
+            </div>
+            <h3>Image Detection</h3>
+            <p>Upload photos to instantly verify whether they have been generated or manipulated by AI tools.</p>
+        </div>
+        <div class="modern-card modern-card-center">
+            <div class="modern-card-icon">
+                <i class="fa-solid fa-microphone-lines"></i>
+            </div>
+            <h3>Audio Analysis</h3>
+            <p>Analyze voice recordings with pinpoint accuracy to detect synthetic or cloned voices.</p>
+        </div>
+        <div class="modern-card modern-card-center">
+            <div class="modern-card-icon">
+                <i class="fa-solid fa-film"></i>
+            </div>
+            <h3>Video Authentication</h3>
+            <p>Scan videos frame-by-frame for deepfake anomalies, face swapping, and visual artifacts.</p>
+        </div>
+    </div>
+</section>
+
+<!-- Stats Section -->
+<section id="stats" class="section-wrapper reveal-on-scroll"
+    style="background: linear-gradient(135deg, #0F172A 0%, #1E1B4B 100%);">
+    <div class="grid-4-col text-center">
+        <div class="stat-item">
+            <div class="stat-number"><span class="counter text-gradient" data-target="10">0</span><span
+                    class="text-gradient">K+</span></div>
+            <div class="stat-label">Active Users</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number"><span class="counter text-gradient" data-target="500">0</span><span
+                    class="text-gradient">+</span></div>
+            <div class="stat-label">Projects Protected</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number"><span class="counter text-gradient" data-target="99">0</span><span
+                    class="text-gradient">%</span></div>
+            <div class="stat-label">Detection Accuracy</div>
+        </div>
+        <div class="stat-item">
+            <div class="stat-number"><span class="counter text-gradient" data-target="50">0</span><span
+                    class="text-gradient">M+</span></div>
+            <div class="stat-label">Threats Blocked</div>
+        </div>
+    </div>
+</section>
+
+<!-- How It Works Section -->
+<section id="how-it-works" class="section-wrapper reveal-on-scroll">
+    <h2 class="section-title">How It Works</h2>
+    <p class="section-subtitle">Securing your media is simple. Our robust pipeline handles the complex analysis
+        seamlessly in the background.</p>
+    <div class="grid-2-col-asym">
+        <div>
+            <div class="step-item reveal-on-scroll">
+                <div class="step-number"><i class="fa-solid fa-cloud-arrow-up"></i></div>
+                <div class="step-content">
+                    <h3>Upload Your Media</h3>
+                    <p>Select any image, audio, or video file you want to verify. We support a wide range of popular
+                        formats.</p>
+                </div>
+            </div>
+            <div class="step-item reveal-on-scroll" style="transition-delay: 0.15s;">
+                <div class="step-number"><i class="fa-solid fa-microchip"></i></div>
+                <div class="step-content">
+                    <h3>AI Analysis</h3>
+                    <p>Our advanced deep learning models process the content, checking for artifacts and synthetic
+                        generation patterns.</p>
+                </div>
+            </div>
+            <div class="step-item reveal-on-scroll" style="transition-delay: 0.3s;">
+                <div class="step-number"><i class="fa-solid fa-file-shield"></i></div>
+                <div class="step-content">
+                    <h3>Review The Report</h3>
+                    <p>Receive a comprehensive trust score and detailed breakdown of any manipulated segments detected.
+                    </p>
+                </div>
+            </div>
+            <div class="step-item reveal-on-scroll" style="transition-delay: 0.45s;">
+                <div class="step-number"><i class="fa-solid fa-check-double"></i></div>
+                <div class="step-content">
+                    <h3>Stay Protected</h3>
+                    <p>Download your certified analysis report and maintain a secure digital environment moving forward.
+                    </p>
+                </div>
+            </div>
+        </div>
+        <div class="text-center reveal-on-scroll" style="transition-delay: 0.3s;">
+            <div class="modern-card modern-card-center"
+                style="padding: 4rem 3rem; display: inline-flex; justify-content: center; align-items: center;">
+                <i class="fa-solid fa-shield-halved"
+                    style="font-size: 8rem; background: var(--primary-gradient); -webkit-background-clip: text; background-clip: text; -webkit-text-fill-color: transparent; filter: drop-shadow(0 0 20px rgba(99,102,241,0.5));"></i>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Testimonials Section -->
+<section id="testimonials" class="section-wrapper dark reveal-on-scroll">
+    <h2 class="section-title">Trusted by Experts</h2>
+    <p class="section-subtitle">See what security professionals and analysts are saying about DeepShield's capabilities.
+    </p>
+    <div class="grid-3-col">
+        <div class="modern-card testimonial-card reveal-on-scroll">
+            <div class="testimonial-stars">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                    class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <p>"DeepShield has become an indispensable tool for our media verification team. The video analysis is
+                incredibly accurate."</p>
+            <div class="testimonial-author">
+                <img src="https://i.pravatar.cc/150?img=68" alt="Sarah J.">
+                <div>
+                    <h4>Sarah Jenkins</h4>
+                    <span>Security Analyst</span>
+                </div>
+            </div>
+        </div>
+        <div class="modern-card testimonial-card reveal-on-scroll" style="transition-delay: 0.15s;">
+            <div class="testimonial-stars">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                    class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i>
+            </div>
+            <p>"The audio deepfake detection saved us from a highly sophisticated social engineering attempt.
+                Exceptional platform."</p>
+            <div class="testimonial-author">
+                <img src="https://i.pravatar.cc/150?img=11" alt="David M.">
+                <div>
+                    <h4>David Miller</h4>
+                    <span>CISO</span>
+                </div>
+            </div>
+        </div>
+        <div class="modern-card testimonial-card reveal-on-scroll" style="transition-delay: 0.3s;">
+            <div class="testimonial-stars">
+                <i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i class="fa-solid fa-star"></i><i
+                    class="fa-solid fa-star"></i><i class="fa-solid fa-star-half-stroke"></i>
+            </div>
+            <p>"An intuitive interface backed by powerful AI. The awareness training modules are also a great bonus for
+                our staff."</p>
+            <div class="testimonial-author">
+                <img src="https://i.pravatar.cc/150?img=47" alt="Elena P.">
+                <div>
+                    <h4>Elena Petrova</h4>
+                    <span>IT Director</span>
+                </div>
+            </div>
+        </div>
+    </div>
+</section>
+
+<!-- Call To Action Section -->
+<section class="section-wrapper reveal-on-scroll" style="padding-bottom: 2rem;">
+    <div class="cta-box">
+        <div class="badge-pill mb-4"
+            style="background: rgba(255,255,255,0.1); border-color: rgba(255,255,255,0.2); color: white;">🛡️ Join
+            DeepShield</div>
+        <h2>Ready to Secure Your Digital Assets?</h2>
+        <p>Join thousands of professionals already using DeepShield to detect deepfakes and stop cyber threats in their
+            tracks.</p>
+        {% if not current_user.is_authenticated %}
+        <a href="{{ url_for('register') }}" class="btn-massive">Create Free Account</a>
+        {% else %}
+        <a href="{{ url_for('dashboard') }}" class="btn-massive">Go to Dashboard</a>
+        {% endif %}
+    </div>
+</section>
 
 <style>
     /* Reset & Layout */
@@ -33,47 +213,117 @@
     }
 
     .hero-container {
-        height: 80vh;
-        /* Occupy most of the screen */
+        min-height: 100vh;
         display: flex;
         align-items: center;
         justify-content: center;
         position: relative;
         z-index: 1;
-        /* Above background */
+        overflow: hidden;
+    }
+
+    .hero-glow-blob {
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 60vw;
+        height: 60vw;
+        max-width: 800px;
+        max-height: 800px;
+        background: radial-gradient(circle, rgba(99, 102, 241, 0.45) 0%, rgba(6, 182, 212, 0.25) 40%, transparent 70%);
+        filter: blur(80px);
+        z-index: -1;
+        animation: float 8s ease-in-out infinite;
+    }
+
+    @keyframes float {
+
+        0%,
+        100% {
+            transform: translate(-50%, -50%) scale(1);
+        }
+
+        50% {
+            transform: translate(-50%, -55%) scale(1.05);
+        }
     }
 
     .hero-section {
-        padding: 2rem;
-        background: rgba(15, 12, 41, 0.4);
-        /* Slight backdrop for legibility */
-        backdrop-filter: blur(5px);
-        border-radius: 20px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        max-width: 900px;
-        width: 90%;
+        padding: 4rem 2rem;
+        max-width: 1000px;
+        width: 100%;
+        position: relative;
+        z-index: 2;
+        margin-top: -5vh;
+    }
+
+    .badge-pill {
+        display: inline-block;
+        padding: 0.5rem 1rem;
+        background: rgba(99, 102, 241, 0.15);
+        border: 1px solid rgba(99, 102, 241, 0.4);
+        border-radius: 50px;
+        color: var(--primary-color);
+        font-weight: 600;
+        font-size: 0.95rem;
+        margin-bottom: 2rem;
+        box-shadow: var(--shadow-glow);
     }
 
     .hero-title {
-        font-size: 4rem;
+        font-size: 5rem;
         margin-bottom: 1.5rem;
         line-height: 1.1;
-        font-weight: 700;
-        text-shadow: 0 5px 15px rgba(0, 0, 0, 0.3);
+        font-weight: 800;
+        letter-spacing: -1px;
+    }
+
+    .drop-glow {
+        filter: drop-shadow(0 0 25px rgba(99, 102, 241, 0.6));
     }
 
     .hero-subtitle {
-        font-size: 1.3rem;
-        color: #e0e0e0;
-        max-width: 700px;
-        margin: 0 auto 2rem;
-        text-shadow: 0 2px 5px rgba(0, 0, 0, 0.5);
+        font-size: 1.4rem;
+        color: var(--text-secondary);
+        max-width: 750px;
+        margin: 0 auto 3rem;
+        line-height: 1.6;
     }
 
-    /* Override base styles if needed for this specific page */
-    .btn-primary {
-        padding: 1rem 2.5rem;
-        font-size: 1.1rem;
+    .hero-actions {
+        display: flex;
+        gap: 1.5rem;
+        justify-content: center;
+        align-items: center;
+    }
+
+    .btn-lg {
+        padding: 1.2rem 2.5rem;
+        font-size: 1.15rem;
+        border-radius: 100px;
+    }
+
+    @media (max-width: 768px) {
+        .hero-title {
+            font-size: 3rem;
+        }
+
+        .hero-subtitle {
+            font-size: 1.1rem;
+        }
+
+        .hero-actions {
+            flex-direction: column;
+            width: 100%;
+            max-width: 300px;
+            margin: 0 auto;
+        }
+
+        .hero-actions a {
+            width: 100%;
+            text-align: center;
+        }
     }
 </style>
 
@@ -82,6 +332,7 @@
 <script src="https://cdn.jsdelivr.net/npm/vanta@latest/dist/vanta.net.min.js"></script>
 <script>
     document.addEventListener('DOMContentLoaded', () => {
+        // Vanta Background
         VANTA.NET({
             el: "#vanta-bg",
             mouseControls: true,
@@ -91,13 +342,56 @@
             minWidth: 200.00,
             scale: 1.00,
             scaleMobile: 1.00,
-            color: 0x00d2ff,       /* Primary Accent */
-            backgroundColor: 0x0f0c29, /* Dark BG */
+            color: 0x06b6d4,       /* Secondary Accent */
+            backgroundColor: 0x0f172a, /* Dark navy BG */
             points: 12.00,
             maxDistance: 22.00,
             spacing: 18.00,
             showDots: true
-        })
+        });
+
+        // Reveal on scroll
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.classList.add('is-visible');
+                    // observer.unobserve(entry.target); // keep animating or run once
+                }
+            });
+        }, { threshold: 0.15 });
+
+        document.querySelectorAll('.reveal-on-scroll').forEach((el) => {
+            observer.observe(el);
+        });
+
+        // Counter Animation
+        const counters = document.querySelectorAll('.counter');
+        const counterObserver = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting && !entry.target.classList.contains('counted')) {
+                    entry.target.classList.add('counted');
+                    const target = +entry.target.getAttribute('data-target');
+                    const duration = 2000; // 2 seconds
+                    const increment = target / (duration / 16);
+
+                    let current = 0;
+                    const updateCounter = () => {
+                        current += increment;
+                        if (current < target) {
+                            entry.target.innerText = Math.ceil(current);
+                            requestAnimationFrame(updateCounter);
+                        } else {
+                            entry.target.innerText = target;
+                        }
+                    };
+                    updateCounter();
+                }
+            });
+        }, { threshold: 0.5 });
+
+        counters.forEach(counter => {
+            counterObserver.observe(counter);
+        });
     });
 </script>
 {% endblock %}

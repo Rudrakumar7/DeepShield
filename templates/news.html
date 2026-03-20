@@ -9,7 +9,7 @@
 
     <div class="news-grid">
         {% for article in news %}
-        <div class="glass p-4 news-card {% if article.severity == 'Critical' %}border-critical{% endif %}">
+        <div class="modern-card p-4 {% if article.severity == 'Critical' %}border-critical{% endif %}">
 
             <!-- Header: Source & Date -->
             <div class="d-flex justify-content-between align-items-center mb-3">

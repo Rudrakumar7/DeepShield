@@ -22,8 +22,15 @@
         </form>
 
         {% if result %}
-        <div class="result-box glass mt-4 {{ 'alert-error' if result.result == 'Fake' else 'alert-success' }}">
-            <h3 class="text-center">Detection Result: {{ result.result }}</h3>
+        {% set box_class = 'alert-success' %}
+        {% if result.risk_level == 'High' %}
+            {% set box_class = 'alert-error' %}
+        {% elif result.risk_level == 'Medium' %}
+            {% set box_class = 'bg-orange-500/20 border-orange-500/50 text-orange-200' %}
+        {% endif %}
+        
+        <div class="result-box glass mt-4 p-6 rounded-2xl border {{ box_class }}">
+            <h3 class="text-center text-2xl font-bold mb-2">Detection Result: {{ result.result }}</h3>
             <div class="result-details mt-2">
                 <p><strong>Confidence:</strong> {{ result.confidence }}%</p>
                 <p><strong>Analysis:</strong> {{ result.details }}</p>

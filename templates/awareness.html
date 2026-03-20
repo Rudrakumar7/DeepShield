@@ -115,7 +115,7 @@
                 {% for topic in topics %}
                 <div class="col-md-6 mb-4 lesson-card" data-title="{{ topic.title }}"
                     data-difficulty="{{ topic.difficulty }}">
-                    <div class="glass p-4 h-100 d-flex flex-column position-relative">
+                    <div class="modern-card p-4 h-100 d-flex flex-column position-relative">
                         <!-- Header -->
                         <div class="d-flex justify-content-between align-items-start mb-3">
                             <div class="d-flex align-items-center">
@@ -261,7 +261,7 @@
             <div class="row">
                 {% for case in cases %}
                 <div class="col-md-6 mb-4">
-                    <div class="glass p-4 h-100 d-flex flex-column">
+                    <div class="modern-card p-4 h-100 d-flex flex-column">
                         <div class="d-flex justify-content-between mb-3">
                             <h4 class="mb-0">{{ case.title }}</h4>
                             <span class="badge bg-secondary">{{ case.date }}</span>
@@ -287,7 +287,7 @@
             <div class="row" id="glossaryGrid">
                 {% for term, def in glossary.items() %}
                 <div class="col-md-4 mb-3 glossary-item">
-                    <div class="glass p-3 h-100">
+                    <div class="modern-card modern-card-center p-3 h-100">
                         <h5 class="term-title text-primary-accent">{{ term }}</h5>
                         <p class="small text-secondary mb-0">{{ def }}</p>
                     </div>
@@ -670,11 +670,7 @@
     }
 
     .lesson-card {
-        transition: transform 0.2s;
-    }
-
-    .lesson-card:hover {
-        transform: translateY(-5px);
+        /* No standard transform here, let modern-card handle it */
     }
 
     .custom-checkbox .form-check-input {

@@ -1,8 +1,12 @@
-from flask import Flask, render_template, request, redirect, url_for, flash
-from dotenv import load_dotenv
 import os
+import sys
+# Resolve potential DLL conflicts on Windows
+os.environ["KMP_DUPLICATE_LIB_OK"] = "True"
+os.environ["OMP_NUM_THREADS"] = "1"
+os.environ["OPENBLAS_NUM_THREADS"] = "1"
 
-load_dotenv()
+import torch # Force torch load before other libs
+from flask import Flask, render_template, request, redirect, url_for, flash
 from flask_login import LoginManager, login_user, login_required, logout_user, current_user
 from werkzeug.security import generate_password_hash, check_password_hash
 from werkzeug.utils import secure_filename

@@ -1,8 +1,30 @@
 import cv2
 import numpy as np
-from PIL import Image, ImageChops, ImageEnhance
 import os
 import random
+from PIL import Image, ImageChops, ImageEnhance, ExifTags
+from utils.deepfake_inference import DeepfakeInference
+
+# Initialize the Deepfake Models
+# 1. Face-Specific Model
+try:
+    FACE_MODEL_PATH = 'models/checkpoints/best_deepfake_model.pth'
+    face_predictor = DeepfakeInference(model_path=FACE_MODEL_PATH)
+    print("✅ Face Deepfake Model integrated.")
+except Exception as e:
+    face_predictor = None
+    print(f"⚠️ Face Model load failed: {e}")
+
+# 2. Global Frame Model (New)
+try:
+    GLOBAL_MODEL_PATH = 'models/checkpoints/global_deepfake_model.pth'
+    # Fallback to face model if global weights are still being trained/missing
+    active_global_path = GLOBAL_MODEL_PATH if os.path.exists(GLOBAL_MODEL_PATH) else FACE_MODEL_PATH
+    global_predictor = DeepfakeInference(model_path=active_global_path)
+    print(f"✅ Global Image Model integrated (Weights: {os.path.basename(active_global_path)}).")
+except Exception as e:
+    global_predictor = None
+    print(f"⚠️ Global Model load failed: {e}")
 
 def convert_to_ela_image(path, quality):
     """
@@ -35,36 +57,191 @@ def convert_to_ela_image(path, quality):
         
     return ela_im
 
-def analyze_image(filepath):
+def detect_frequency_artifacts(path):
     """
-    Performs Error Level Analysis (ELA) on the uploaded image.
+    Uses Fast Fourier Transform (FFT) to detect periodic artifacts 
+    common in generative AI and deepfake upscaling.
+    """
+    img = cv2.imread(path, cv2.IMREAD_GRAYSCALE)
+    if img is None:
+        return 0.0
+        
+    dft = np.fft.fft2(img)
+    dft_shift = np.fft.fftshift(dft)
+    
+    # Calculate Magnitude Spectrum
+    magnitude_spectrum = 20 * np.log(np.abs(dft_shift) + 1)
+    
+    # High-frequency analysis
+    rows, cols = img.shape
+    crow, ccol = rows // 2 , cols // 2
+    
+    # Analyze the high-frequency quadrants for periodic noise
+    # (Simplified: check standard deviation of high-freq areas)
+    mask = np.ones((rows, cols), np.uint8)
+    r = 30 # radius to exclude low-freq center
+    mask[crow-r:crow+r, ccol-r:ccol+r] = 0
+    
+    high_freq_part = magnitude_spectrum * mask
+    non_zero_high_freq = high_freq_part[high_freq_part > 0]
+    
+    std_val = np.std(non_zero_high_freq) if len(non_zero_high_freq) > 0 else 0
+    
+    # Generative AI often has unnaturally uniform or periodic high-freq noise (low std in mag spectrum)
+    # or extreme high-freq spikes (high std). We normalize to a risk score.
+    risk = min(100, std_val * 2) 
+    return risk
+
+def check_metadata(path):
+    """
+    Checks EXIF/Metadata for signatures of AI generation or editing tools.
     """
     try:
+        img = Image.open(path)
+        info = img.info
+        exif = img.getexif()
+        
+        ai_signatures = ['DALL-E', 'Midjourney', 'Stable Diffusion', 'Adobe Firefly', 'ChatGPT', 'OpenAI', 'Generative AI', 'Photoshop']
+        details = []
+        risk = 0
+        ai_generated_flag = False
+        
+        # 1. Check basic info/strings
+        for key, value in info.items():
+            if any(sig.lower() in str(value).lower() for sig in ai_signatures):
+                risk += 80
+                ai_generated_flag = True
+                details.append(f"AI Signature found in metadata: {value}")
+                
+        # 2. Check EXIF tags
+        if exif:
+            for tag, value in exif.items():
+                decoded = ExifTags.TAGS.get(tag, tag)
+                if any(sig.lower() in str(value).lower() for sig in ai_signatures):
+                    risk += 80
+                    ai_generated_flag = True
+                    details.append(f"AI Signature in EXIF ({decoded}): {value}")
+        
+        # 3. Check for suspiciously missing EXIF (Generative images often lack camera info)
+        if not exif or len(exif) < 3:
+            # Not conclusive but adds to suspicion
+            risk += 15
+            details.append("Minimal EXIF metadata (Typical for AI or internet-saved images).")
+            
+        return min(100, risk), details, ai_generated_flag
+    except:
+        return 0, []
+
+def analyze_image(filepath):
+    """
+    Performs comprehensive analysis by combining:
+    1. AI Deepfake Model (Face-specific)
+    2. FFT Frequency Analysis (Global artifacts)
+    3. ELA (Compression/Editing anomalies)
+    4. Metadata/EXIF Scanning (AI Signatures)
+    """
+    try:
+        details = []
+        scores = {}
+        
+        # 1. AI Analysis: Face-Specific
+        if face_predictor:
+            probs, confidence = face_predictor.predict_image(filepath)
+            if probs:
+                scores['face_ai'] = int(probs['Fake'] * 100)
+                details.append(f"Face Analysis: {probs['Fake']*100:.1f}% synthetic prob.")
+            else:
+                scores['face_ai'] = 0
+                details.append("No face detected for specialized AI scan.")
+        else:
+            scores['face_ai'] = 0
+
+        # 2. AI Analysis: Global Image Context (New)
+        if global_predictor:
+            # We use predict_global to check the entire frame for inconsistencies
+            probs, confidence = global_predictor.predict_global(filepath)
+            scores['global_ai'] = int(probs['Fake'] * 100)
+            details.append(f"Global AI Context: {probs['Fake']*100:.1f}% manipulation prob.")
+        else:
+            scores['global_ai'] = 0
+
+        # 2. Frequency Domain Analysis (Focus: AI Generation Patterns)
+        fft_risk = detect_frequency_artifacts(filepath)
+        scores['fft'] = fft_risk
+        if fft_risk > 50:
+            details.append(f"Frequency Analysis: High-frequency artifacts detected ({fft_risk:.1f}).")
+
+        # 3. ELA Analysis (Focus: Modification/Resaving)
         ela_image = convert_to_ela_image(filepath, 90)
-        
-        # Convert PIL image to OpenCV format
         ela_cv = cv2.cvtColor(np.array(ela_image), cv2.COLOR_RGB2BGR)
-        
-        # Calculate mean intensity of ELA
-        # Higher mean intensity generally implies more compression artifacts or manipulation
         gray_ela = cv2.cvtColor(ela_cv, cv2.COLOR_BGR2GRAY)
         mean_error = np.mean(gray_ela)
+        ela_threshold = 25.0 
+        scores['ela'] = min(100, (mean_error / ela_threshold) * 50)
+        details.append(f"ELA Analysis: Mean error {mean_error:.2f}.")
+
+        # 4. Metadata Analysis (Focus: AI Signatures)
+        meta_risk, meta_details, has_ai_meta = check_metadata(filepath)
+        scores['metadata'] = meta_risk
+        details.extend(meta_details)
+
+        # --- MULTI-CLASS CATEGORIZATION LOGIC ---
         
-        # Simple heuristic threshold
-        # In a real system, a CNN would analyze the ELA image
-        threshold = 25.0 
+        classification = "Real"
+        final_risk = 0.0
         
-        is_fake = mean_error > threshold
-        confidence = min(100.0, (mean_error / threshold) * 50.0 + 50.0) if is_fake else min(100.0, (1 - mean_error/threshold) * 50.0 + 50.0)
+        # Feature values
+        face_fakeness = scores.get('face_ai', 0)
+        global_fakeness = scores.get('global_ai', 0)
+        fft = scores.get('fft', 0)
+        ela = scores.get('ela', 0)
         
-        result_text = 'Potential Manipulation Detected' if is_fake else 'No Obvious Manipulation'
-        risk_level = 'High' if is_fake else 'Low'
+        # 1. Definitively AI Generated (DALL-E, Midjourney, etc.)
+        if has_ai_meta or (global_fakeness > 70 and fft > 60):
+            classification = "AI Generated"
+            final_risk = max(85, global_fakeness, meta_risk)
+        
+        # 2. Deepfake (Face Manipulation / Swap)
+        elif face_fakeness > 65:
+            classification = "Deepfake"
+            final_risk = max(70, face_fakeness)
+            
+        # 3. AI Modified (Background Edits / Generative Fill / Inpainting)
+        elif global_fakeness > 55 or ela > 40:
+             # If face is real but global/ELA is highly suspicious, it's a local edit
+             classification = "AI Modified"
+             final_risk = max(60, global_fakeness, ela)
+             
+        # 4. Real or Mild Suspicion
+        else:
+            # Calculate a base risk from heuristics
+            base_risk = (global_fakeness * 0.4) + (fft * 0.3) + (ela * 0.3)
+            final_risk = base_risk
+            if final_risk > 45:
+                classification = "Suspicious"
+            else:
+                classification = "Real"
+
+        # Finalize Confidence Values
+        is_fake = classification in ["Deepfake", "AI Generated", "AI Modified", "Suspicious"]
+        confidence = min(99.0, final_risk if is_fake else (100 - final_risk))
+        risk_level = 'High' if classification in ["Deepfake", "AI Generated"] else ('Medium' if classification in ["AI Modified", "Suspicious"] else 'Low')
         
         return {
-            'result': result_text,
+            'result': classification,
             'confidence': round(confidence, 2),
-            'details': f"ELA Mean Error: {mean_error:.2f} (Threshold: {threshold}). High error levels often indicate resaving or modification.",
-            'risk_level': risk_level
+            'details': " | ".join(details) if details else "No obvious manipulation detected.",
+            'risk_level': risk_level,
+            'model_type': 'Multi-Class AI Engine'
+        }
+        
+    except Exception as e:
+        print(f"Error in analyze_image: {e}")
+        return {
+            'result': 'Error',
+            'confidence': 0.0,
+            'details': f"Analysis failed: {str(e)}",
+            'risk_level': 'Unknown'
         }
         
     except Exception as e:

@@ -5,35 +5,39 @@
     <h2 class="mb-4">Cybersecurity Tools</h2>
 
     <div class="tools-grid">
-        <!-- Password Generator Link -->
         <a href="{{ url_for('password_generator') }}" class="tool-card-link">
-            <div class="glass p-4 tool-card">
-                <h3>🔐 Password Generator</h3>
-                <p class="text-secondary mt-2">Generate strong, secure passwords instantly.</p>
+            <div class="modern-card modern-card-center p-4 h-100">
+                <div class="modern-card-icon" style="width: 60px; height: 60px; margin-bottom: 1rem;"><i
+                        class="fa-solid fa-key" style="font-size: 1.8rem;"></i></div>
+                <h3 style="font-size: 1.3rem;">Password Generator</h3>
+                <p class="mt-2 text-sm">Generate strong, secure passwords instantly.</p>
             </div>
         </a>
 
-        <!-- Phishing Checker Link -->
         <a href="{{ url_for('phishing_checker') }}" class="tool-card-link">
-            <div class="glass p-4 tool-card">
-                <h3>🎣 Phishing URL Checker</h3>
-                <p class="text-secondary mt-2">Analyze URLs for potential phishing threats.</p>
+            <div class="modern-card modern-card-center p-4 h-100">
+                <div class="modern-card-icon" style="width: 60px; height: 60px; margin-bottom: 1rem;"><i
+                        class="fa-solid fa-fish" style="font-size: 1.8rem;"></i></div>
+                <h3 style="font-size: 1.3rem;">Phishing Checker</h3>
+                <p class="mt-2 text-sm">Analyze URLs for potential phishing threats.</p>
             </div>
         </a>
 
-        <!-- Password Strength Checker Link -->
         <a href="{{ url_for('password_strength') }}" class="tool-card-link">
-            <div class="glass p-4 tool-card">
-                <h3>💪 Password Strength</h3>
-                <p class="text-secondary mt-2">Test how strong your password is.</p>
+            <div class="modern-card modern-card-center p-4 h-100">
+                <div class="modern-card-icon" style="width: 60px; height: 60px; margin-bottom: 1rem;"><i
+                        class="fa-solid fa-dumbbell" style="font-size: 1.8rem;"></i></div>
+                <h3 style="font-size: 1.3rem;">Password Strength</h3>
+                <p class="mt-2 text-sm">Test how strong your password is natively.</p>
             </div>
         </a>
 
-        <!-- Phishing Simulation Link -->
         <a href="{{ url_for('phishing_simulation') }}" class="tool-card-link">
-            <div class="glass p-4 tool-card">
-                <h3>🎣 Phishing Simulation</h3>
-                <p class="text-secondary mt-2">Interactive "Spot the Phish" trainer.</p>
+            <div class="modern-card modern-card-center p-4 h-100">
+                <div class="modern-card-icon" style="width: 60px; height: 60px; margin-bottom: 1rem;"><i
+                        class="fa-solid fa-user-secret" style="font-size: 1.8rem;"></i></div>
+                <h3 style="font-size: 1.3rem;">Phish Simulator</h3>
+                <p class="mt-2 text-sm">Interactive "Spot the Phish" trainer module.</p>
             </div>
         </a>
     </div>
@@ -62,8 +66,8 @@
     }
 
     .tool-card:hover {
-        border-color: var(--primary-accent);
-        box-shadow: 0 0 15px rgba(0, 243, 255, 0.2);
+        border-color: var(--primary-color);
+        box-shadow: var(--shadow-glow);
     }
 </style>
 {% endblock %}
